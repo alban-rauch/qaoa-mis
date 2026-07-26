@@ -13,6 +13,12 @@ from scipy.optimize import linprog
 #                        INITIAL PARAMETERS                        #
 # ================================================================ #
 
+def mixed_init_param(p, init_param):
+    betas = [init_param * np.pi] * p
+    gammas = [init_param * np.pi] * p
+    raw_params = np.array([gammas, betas], requires_grad=True)
+    return raw_params
+
 def random_init_param(p):
     rng = np.random.default_rng()
     betas = rng.uniform(0, np.pi, p)

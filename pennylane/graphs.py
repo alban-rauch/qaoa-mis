@@ -6,6 +6,7 @@ Graph generation.
 
 import numpy as np
 import networkx as nx
+from matplotlib import pyplot as plt
 
 
 ##############################          Tests          ##############################
@@ -21,7 +22,7 @@ def paragon():
             ]
     graph = nx.Graph(edges)
 
-    positions = nx.spring_layout(graph, seed=1)
+    # positions = nx.spring_layout(graph, seed=1)
     # nx.draw(graph, with_labels=True, pos=positions)
     # plt.show()
 
@@ -49,7 +50,7 @@ def linear_graph(N):
     return nx.path_graph(N)
 
 def circular_graph(N):
-    return nx.circulant_graph(N)
+    return nx.circulant_graph(N, [1])
 
 def complete_bipartite_graph(a, b):
     return nx.complete_bipartite_graph(a, b)

@@ -4,9 +4,9 @@ from pennylane import numpy as np
 from matplotlib import pyplot as plt
 
 import graphs as gph
-import warm_start as ws
-import ansatz as qa
-import qaoa_run as qr
+import qaoa_pipeline.warm_start as ws
+import qaoa_pipeline.ansatz as qa
+import qaoa_pipeline.qaoa_run as qr
 
 
 # ======================================================================================== #
@@ -25,7 +25,7 @@ opt_steps = 400
 constrained = False
 
 relaxation_type = None
-param_transfer_type = 'fourier'
+param_transfer_type = 'interp'
 (fourier_q, fourier_R) = (None, 5)
 
 conditions = [
@@ -75,7 +75,7 @@ def make_qaoa_pipeline(
     def qaoa_pipeline(p, N):
         problem_config["N"] = N
         apparatus_config["p"] = p
-        graph = gph.randomGilbert(N, 0.25)
+        graph = gph.complete_graph(N)
         problem_config["graph"] = graph
         return qr.standard_qaoa(problem_config, strategy_config, apparatus_config, silence=True)
     
@@ -107,12 +107,18 @@ def repeated_qaoa(p_values, N_values, n_graphs, *conditions):
         "sr_samples": sr_samples
     }
 
-p_values = np.arange(1, 4)
-N_values = np.arange(4, 11)
-results = repeated_qaoa(p_values, N_values, 30, *conditions)
+p_values = np.arange(1, 7)
+N_values = np.arange(4, 15)
+results = repeated_qaoa(p_values, N_values, 1, *conditions)
 ar_samples = results["ar_samples"]
 sr_samples = results["sr_samples"]
-np.savez("diagnostic2.npz", ar_samples=ar_samples, sr_samples=sr_samples)
+np.savez(
+    "diagnostic.npz", 
+    p_values=p_values, 
+    N_values=N_values, 
+    ar_samples=ar_samples, 
+    sr_samples=sr_samples
+    )
 
 
 # ======================================================================================== #
@@ -122,7 +128,7 @@ np.savez("diagnostic2.npz", ar_samples=ar_samples, sr_samples=sr_samples)
 def make_cost_function_builder(constrained, relaxation_type, device):
     
     def cost_function_builder(p, N):
-        graph = gph.randomGilbert(N, 0.25)
+        graph = gph.circular_graph(N)
         penalizer = 1.5 if not constrained else 0.0
         wires = range(N)
 

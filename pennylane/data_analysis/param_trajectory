@@ -1,0 +1,55 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
+
+def PCA_param_trajectory(param_history, cost_history=None, n_components=2):
+    X = np.asarray(param_history)
+    n_iter, n_params = X.shape
+ 
+    if n_params == 2:
+        # p=1: no reduction needed, plot gamma vs beta directly
+        proj = X
+        explained = [100.0, 0.0]
+    else:
+        pca = PCA(n_components=n_components)
+        proj = pca.fit_transform(X)
+        explained = pca.explained_variance_ratio_ * 100
+ 
+    iters = np.arange(n_iter)
+    color_by = cost_history if cost_history is not None else iters
+    color_label = "Cost value" if cost_history is not None else "Iteration"
+ 
+    fig = plt.figure(figsize=(7, 6))
+ 
+    if n_components == 2 or n_params == 2:
+        ax = fig.add_subplot(111)
+        sc = ax.scatter(proj[:, 0], proj[:, 1], c=color_by, cmap="viridis", s=25)
+        ax.plot(proj[:, 0], proj[:, 1], color="gray", alpha=0.4, linewidth=1)
+        ax.scatter(proj[0, 0], proj[0, 1], color="red", marker="o", s=80, label="start")
+        ax.scatter(proj[-1, 0], proj[-1, 1], color="black", marker="*", s=120, label="end")
+        xlabel = "gamma" if n_params == 2 else f"PC1 ({explained[0]:.1f}%)"
+        ylabel = "beta" if n_params == 2 else f"PC2 ({explained[1]:.1f}%)"
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.legend()
+    else:
+        ax = fig.add_subplot(111, projection="3d")
+        sc = ax.scatter(proj[:, 0], proj[:, 1], proj[:, 2], c=color_by, cmap="viridis", s=25)
+        ax.plot(proj[:, 0], proj[:, 1], proj[:, 2], color="gray", alpha=0.4, linewidth=1)
+        ax.scatter(*proj[0], color="red", s=80, label="start")
+        ax.scatter(*proj[-1], color="black", marker="*", s=120, label="end")
+        ax.set_xlabel(f"PC1 ({explained[0]:.1f}%)")
+        ax.set_ylabel(f"PC2 ({explained[1]:.1f}%)")
+        ax.set_zlabel(f"PC3 ({explained[2]:.1f}%)")
+        ax.legend()
+ 
+    cbar = fig.colorbar(sc, ax=ax)
+    cbar.set_label(color_label)
+    ax.set_title(f"QAOA parameter trajectory (p={n_params // 2})")
+    plt.tight_layout()
+    plt.savefig("qaoa_trajectory.png", dpi=150)
+    plt.show()
+ 
+    if n_params > 2:
+        print(f"Variance explained by shown components: {sum(explained[:n_components]):.1f}%")

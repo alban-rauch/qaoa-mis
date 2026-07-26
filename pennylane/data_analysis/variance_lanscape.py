@@ -33,7 +33,7 @@ def full_energy_landscape_shell(cost_function, theta0, num_samples):
     flat_theta0 = np.concatenate(theta0)
     n = flat_theta0.size
     
-    radii = np.linspace(0.1, np.pi, 101)
+    radii = np.linspace(0.1, np.pi, 51)
     
     total_samples = []
     idx = 0

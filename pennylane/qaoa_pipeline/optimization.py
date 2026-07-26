@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 
 
 import copy
-import warm_start as ws
+import qaoa_pipeline.warm_start as ws
 
 def plot_energies(energies):
     plt.plot(energies)
@@ -158,9 +158,9 @@ def general_linear_interpolation(params_list, p, q):     # Convert from p-dimens
     new_params = (1 - distances) * params_arr[:, floors] + distances * params_arr[:, ceilings]
     return new_params.tolist()
 
-def interp_params(cost_function_p, optimizer, opt_steps, q, silence):
+def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence):
     if q == 1:
-        init_params = ws.random_init_param(1)
+        init_params = ws.mixed_init_param(1, init_param)
         print("Layer 1 optimization...")
         opt_params, energies = run_optimization(
             cost_function=cost_function_p(1),
@@ -173,11 +173,15 @@ def interp_params(cost_function_p, optimizer, opt_steps, q, silence):
         best_energy_ps = [energies]
         return opt_params, best_energy_ps
     
-    prev_layer_params, best_energy_ps = interp_params(cost_function_p, optimizer, opt_steps, q-1, silence=silence)
+    prev_layer_params, best_energy_ps = interp_params(
+        cost_function_p, 
+        init_param=init_param,
+        optimizer=optimizer, 
+        opt_steps=opt_steps, 
+        q=q-1, 
+        silence=silence)
     print(f"Layer {q} optimization...")
-    prev_gamma = prev_layer_params[0]
-    prev_beta = prev_layer_params[1]
-    new_params = linear_interpolation([prev_gamma, prev_beta], q-1)
+    new_params = linear_interpolation(prev_layer_params, q-1)
     init_params = np.array(new_params, requires_grad=True)
     opt_params, energies = run_optimization(
             cost_function=cost_function_p(q),
@@ -243,7 +247,7 @@ def perturb_uv(u, v, alp=0.6):
     return np.array(new_u, requires_grad=True), np.array(new_v, requires_grad=True)
 
 
-def fourier_params(cost_function_p, optimizer, opt_steps, p_max, q_max=None, R=0, alp=0.6, silence=True):
+def fourier_params(cost_function_p, init_param, optimizer, opt_steps, p_max, q_max=None, R=0, alp=0.6, silence=True):
     uL = vL = uB = vB = None
     energy_history = []
     for p in range(1, p_max + 1):
@@ -253,7 +257,7 @@ def fourier_params(cost_function_p, optimizer, opt_steps, p_max, q_max=None, R=0
         # --- L-chain --- #
         
         if p == 1:
-            init_params_1 = np.array(ws.random_init_param(1), requires_grad=True)
+            init_params_1 = np.array(ws.random_init_param(1, init_param), requires_grad=True)
             init_u, init_v = init_params_1[0], init_params_1[1]
         else:
             init_u, init_v = pad_uv(uL, vL, q_p)

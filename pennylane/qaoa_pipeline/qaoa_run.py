@@ -11,9 +11,9 @@ from functools import partial
 from matplotlib import pyplot as plt
 
 import graphs as gph
-import warm_start as ws
-import ansatz as qa
-import optimization as opt
+import qaoa_pipeline.warm_start as ws
+import qaoa_pipeline.ansatz as qa
+import qaoa_pipeline.optimization as opt
 import classical as clas
 
 
@@ -113,6 +113,7 @@ def standard_qaoa(problem, strategy, apparatus, silence=False):
     relaxation_type = strategy["relaxation_type"]
     param_transfer_type = strategy["param_transfer_type"]
     fourier_q, fourier_R = strategy["fourier_qR"]
+    init_param = strategy["init_param"]
 
     p = apparatus["p"]
     device = apparatus["device"]
@@ -160,7 +161,7 @@ def standard_qaoa(problem, strategy, apparatus, silence=False):
     # ----------------  STEP 2:  Optimize parameters  ---------------- #
 
     if param_transfer_type == 'given':
-        angles_given = [[0.5] * p] * 2
+        angles_given = ws.mixed_init_param(p, init_param)
         best_params, best_energies = opt.run_optimization(
                 cost_function=cost_function,
                 init_params=angles_given, 
@@ -173,7 +174,7 @@ def standard_qaoa(problem, strategy, apparatus, silence=False):
         best_params, best_energies, best_energy_ps = opt.param_restarts(
                 cost_function=cost_function, 
                 n_restarts=p,
-                p=p, 
+                p=p,
                 optimizer=optimizer, 
                 opt_steps=opt_steps, 
                 silence=silence
@@ -187,9 +188,16 @@ def standard_qaoa(problem, strategy, apparatus, silence=False):
                 p=p,
                 cost_h=cost_h,
                 mixer_layer=mixer_layer,
-                angles=angles
+                angles=angles,
             )
-        best_params, best_energy_ps = opt.interp_params(cost_function_p, optimizer, opt_steps, q=p, silence=True)
+        best_params, best_energy_ps = opt.interp_params(
+                cost_function_p, 
+                init_param=init_param, 
+                optimizer=optimizer, 
+                opt_steps=opt_steps,
+                q=p, 
+                silence=True
+            )
         best_energies = best_energy_ps[-1]
     
 
@@ -201,10 +209,11 @@ def standard_qaoa(problem, strategy, apparatus, silence=False):
                 p=p,
                 cost_h=cost_h,
                 mixer_layer=mixer_layer,
-                angles=angles
+                angles=angles,
             )
         (uL, vL), (uB, vB), best_energy_ps = opt.fourier_params(
             cost_function_p=cost_function_p,   # same one you use for interp_params
+            init_param=init_param,
             optimizer=optimizer,
             opt_steps=300,
             p_max=p,
@@ -428,7 +437,13 @@ def y_standard_qaoa(problem, strategy, apparatus, silence=False):
                 mixer_layer=mixer_layer,
                 angles=angles
             )
-        best_params, best_energy_ps = opt.interp_params(cost_function_p, optimizer, opt_steps, q=p, silence=True)
+        best_params, best_energy_ps = opt.interp_params(
+            cost_function_p, 
+            optimizer, 
+            opt_steps, 
+            q=p, 
+            silence=True
+            )
         best_energies = best_energy_ps[-1]
     
 
