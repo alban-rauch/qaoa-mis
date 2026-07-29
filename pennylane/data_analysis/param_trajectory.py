@@ -3,12 +3,11 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 
 
-def PCA_param_trajectory(param_history, cost_history=None, n_components=2):
-    X = np.asarray(param_history)
+def PCA_param_trajectory(param_history, cost_history, n_components=2):
+    X = np.asarray(param_history).T
     n_iter, n_params = X.shape
  
     if n_params == 2:
-        # p=1: no reduction needed, plot gamma vs beta directly
         proj = X
         explained = [100.0, 0.0]
     else:

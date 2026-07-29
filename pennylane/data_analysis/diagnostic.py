@@ -4,9 +4,10 @@ from pennylane import numpy as np
 from matplotlib import pyplot as plt
 
 import graphs as gph
-import qaoa_pipeline.warm_start as ws
-import qaoa_pipeline.ansatz as qa
-import qaoa_pipeline.qaoa_run as qr
+from ..circuit import warm_start as ws
+from ..circuit import warm_start as ws
+from ..circuit import ansatz as qa
+from .. import qaoa_run as qr
 
 
 # ======================================================================================== #

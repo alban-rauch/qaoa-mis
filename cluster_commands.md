@@ -16,7 +16,7 @@
 
 #### <font color="silver"> Modules: </font>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Show loadable modules: `modules avail`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Show loadable modules: `module avail`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Allow loading modules defined in another path: `module use MODULE_PATH`
 
@@ -37,8 +37,9 @@
 #### <font color="yellow"> Interactive run: </font>
 ```
 salloc -p PARTITION --time=HH:MM:SS
-module load python/3.12.13.rocm
+module load gcc/13.3.0 Rocm/7.1.1 python/3.11.13 pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 source ~/qaoa_env/bin/activate
+srun --pty bash
 srun python3 scripts/test.py
 ```
 
@@ -62,7 +63,7 @@ sbatch SLURM_SCRIPT
 ################################################################################################
 
 module purge
-module load python/3.12.13.rocm
+module load gcc/13.3.0 Rocm/7.1.1 python/3.11.13 pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
 source ~/qaoa_env/bin/activate
 
@@ -75,5 +76,7 @@ Add if necessary: \
 `srun` \
 `#SBATCH --ntasks-per-node=4` \
 `#SBATCH --gpus-per-node=4`
+
+`module load python/3.12.13.rocm`
 
 

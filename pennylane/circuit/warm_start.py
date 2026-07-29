@@ -14,23 +14,21 @@ from scipy.optimize import linprog
 # ================================================================ #
 
 def mixed_init_param(p, init_param):
-    betas = [init_param * np.pi] * p
-    gammas = [init_param * np.pi] * p
-    raw_params = np.array([gammas, betas], requires_grad=True)
-    return raw_params
+    nb_param = len(init_param)
+    raw_params = [[[init_param[i] * np.pi] * p] for i in range(nb_param)]
+    raw_params_ar = np.array(raw_params, requires_grad=True)
+    return raw_params_ar
 
-def random_init_param(p):
+def random_init_param(p, nb_params, nb_twopi=1):
     rng = np.random.default_rng()
-    betas = rng.uniform(0, np.pi, p)
-    gammas = rng.uniform(0, 2 * np.pi, p)
-    raw_params = np.array([gammas, betas], requires_grad=True)
-    return raw_params
+    raw_params = []
+    for _ in range(nb_twopi):
+        raw_params.append(rng.uniform(0, 2 * np.pi, p))
+    for _ in range(nb_params - nb_twopi):
+        raw_params.append(rng.uniform(0, np.pi, p))
+    raw_params_ar = np.array(raw_params, requires_grad=True)
+    return raw_params_ar
 
-def ma_random_init_param(p, num_gamma_terms, N):
-    rng = np.random.default_rng()
-    gammas = np.array(rng.uniform(0, 2*np.pi, (p, num_gamma_terms)), requires_grad=True)
-    betas  = np.array(rng.uniform(0, np.pi, (p, N)), requires_grad=True)
-    return gammas, betas
 
 # ================================================================ #
 #                           INITIAL STATE                          #

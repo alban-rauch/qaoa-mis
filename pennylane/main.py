@@ -9,79 +9,43 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 import graphs as gph
-import qaoa_pipeline.qaoa_run as qr
-import data_analysis.variance_lanscape as vl
-
-
-# ================================================================ #
-#                             VARIABLES                            #
-# ================================================================ #
-
-# ---------------------- Circuit variables ----------------------- #
-
-N = 12                       # ⇢ Problem size (N)              #!!!#
-# graph = gph.complete_graph(N)
-graph = gph.randomGilbert(N, 0.25)
-# graph = gph.randomDRegular(N, 3)
-# graph = gph.paragon()
-p = 3                       # ⇢ Layers/depth (p)              #!!!#
-
-device = "lightning.qubit"  # "lightning.qubit" / "lightning.amdgpu" 
-
-estimator_shots = 10000     # ⇢ Estimator shots
-sampler_shots = 10000       # ⇢ Sampler shots
-
-
-optimizer = "L-BFGS-B"      # or "Adam"
-opt_steps = 400
-
-
-# ================================================================ #
-#                             QAOA TYPE                            #
-# ================================================================ #
-
-# -------------------------- constrained ------------------------- #
-
-constrained = False
-
-# -------------------------- warm  start ------------------------- #
-
-relaxation_type = None              # None / 'continuous'
-param_transfer_type = 'interp'     # 'given' / 'random' /  
-                                    # 'interp' / 'fourier'
-init_param = 0.5 * np.pi
-(fourier_q, fourier_R) = (None, 5)
+import data_analysis.variance_landscape as vl
+import qaoa_run as qr
 
 
 # ================================================================ #
 #                             QAOA RUN                             #
 # ================================================================ #
 
+N = 12
+p = 3
+
 problem_config = {
     "N": N,
-    "graph": graph,
+    "graph": gph.randomGilbert(N, 0.25), # gph.randomDRegular(N, 3) | gph.randomGilbert(N, 0.25)
 }
 
 strategy_config = {
-    "constrained": constrained,
-    "relaxation_type": relaxation_type,
-    "param_transfer_type": param_transfer_type,
-    "fourier_qR": (fourier_q, fourier_R),
-    "init_param": init_param,
+    "constrained": False,
+    "relaxation_type": 'continuous',    #  None | 'continuous'
+    "param_transfer_type": 'interp',    # 'random' | 'interp' | 'fourier'
+    "fourier_qR": (None, 5),
+    "init_param": [1.0, 0.5],
+    "mixers": ["x"],
 }
 
 apparatus_config = {
     "p": p,
-    "device": device,
-    "estimator_shots": estimator_shots,
-    "sampler_shots": sampler_shots,
-    "optimizer": optimizer,
-    "opt_steps": opt_steps,
+    "device": "lightning.qubit",        # "lightning.qubit" | "lightning.amdgpu" 
+    "estimator_shots": 10000,
+    "sampler_shots": 10000,
+    "optimizer": "L-BFGS-B",            # "L-BFGS-B" | "Adam"
+    "opt_steps": 400,
 }
 
 strategy_config["relaxation_type"] = 'continuous'
 
-one_qaoa_run = qr.standard_qaoa(
+one_qaoa_run = qr.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
         apparatus=apparatus_config,
@@ -94,8 +58,8 @@ params = np.linspace(0.0, 1.0, 100)
 approx_ratios = []
 
 for param in params:
-    strategy_config["init_param"] = param
-    one_qaoa_run = qr.standard_qaoa(
+    strategy_config["init_param"] = [2.0 * param, 1.0 * param]
+    one_qaoa_run = qr.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
         apparatus=apparatus_config,
@@ -117,7 +81,7 @@ plt.show()
 
 #     apparatus_config["p"] = p
 
-#     one_qaoa_run = qr.standard_qaoa(
+#     one_qaoa_run = qaoa_func(
 #         problem=problem_config,
 #         strategy=strategy_config,
 #         apparatus=apparatus_config,
