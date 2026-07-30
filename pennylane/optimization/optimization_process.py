@@ -1,32 +1,28 @@
 """
-optimization.py
+optimization/optimization_process.py
 ===============
 Classical parameter optimizer.
 """
 
-import pennylane as qp
+import pennylane as qml
 from pennylane import numpy as np
+
 from scipy.optimize import minimize
 from scipy.fft import dst, idst
 from scipy.interpolate import CubicSpline
 from matplotlib import pyplot as plt
 
 
-def plot_energies(energies):
-    plt.plot(energies)
-    plt.xlabel("Step")
-    plt.ylabel("Energy")
-    plt.title("Energy vs. Optimization Step")
-    plt.grid(alpha=0.3)
-    plt.show()
+import circuit.warm_start as ws
+import pennylane as qml
 
-def run_optimization_steps(cost_function, init_params, optimizer, steps=70):
+def run_optimization_steps(cost_function, init_params, optimizer, steps=70, silence=True):
     params = np.array(init_params, requires_grad=True)
     energies = []
     for i in range(steps):
         params, energy = optimizer.step_and_cost(cost_function, params)
         energies.append(energy)
-        if i % 10 == 0: print(f"Step {i:3d} | Energy: {energy:.6f}")
+        if i % 10 == 0 and not silence: print(f"Step {i:3d} | Energy: {energy:.6f}")
     return params, energies
 
 def run_optimization(cost_function, init_params, optimizer, steps=300, precision=1e-8, silence=True):
@@ -39,7 +35,7 @@ def run_optimization(cost_function, init_params, optimizer, steps=300, precision
             silence=silence
             )
     else:
-        if optimizer == "Adam": optimizer = qp.AdamOptimizer(stepsize=0.03)
+        if optimizer == "Adam": optimizer = qml.AdamOptimizer(stepsize=0.03)
         return run_native(
             cost_function=cost_function, 
             init_params=init_params, 
@@ -74,7 +70,7 @@ def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True)
     init_params = np.array(init_params, requires_grad=True)
     shape = init_params.shape          # (2, p): [gammas, betas]
 
-    grad_fn = qp.grad(cost_function)
+    grad_fn = qml.grad(cost_function)
     energies = []
 
     def flat_cost(flat_params):

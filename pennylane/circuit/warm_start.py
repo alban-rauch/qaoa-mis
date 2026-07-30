@@ -1,10 +1,9 @@
 """
-warm_start.py
+circuit/warm_start.py
 =============
 Warm starting via relaxation for improved reference state initialization.
 """
 
-import pennylane as qp
 from pennylane import numpy as np
 
 from scipy.optimize import linprog
@@ -15,7 +14,7 @@ from scipy.optimize import linprog
 
 def mixed_init_param(p, init_param):
     nb_param = len(init_param)
-    raw_params = [[[init_param[i] * np.pi] * p] for i in range(nb_param)]
+    raw_params = [[init_param[i] * np.pi] * p for i in range(nb_param)]
     raw_params_ar = np.array(raw_params, requires_grad=True)
     return raw_params_ar
 

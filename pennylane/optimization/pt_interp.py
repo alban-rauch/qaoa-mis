@@ -1,11 +1,18 @@
+"""
+optimization/pt_interp.py
+===============
+"INTERP" parameter transfer framework.
+"""
+
 # ======================================================================================== #
 #                                         'interp'                                         #
 # ======================================================================================== #
 
 from pennylane import numpy as np
 
-from circuit.warm_start import mixed_init_param
-from .optimization_process import run_optimization, plot_energies
+import circuit.warm_start as ws
+from .optimization_process import run_optimization
+from plotting import plot_energies
 
 
 def linear_interpolation(params_list, p):     # Convert from p-dimensional gamma and beta to (p+1)-dimensional
@@ -30,8 +37,8 @@ def general_linear_interpolation(params_list, p, q):     # Convert from p-dimens
 
 def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence):
     if q == 1:
-        init_params = mixed_init_param(1, init_param)
-        print("Layer 1 optimization...")
+        init_params = ws.mixed_init_param(1, init_param)
+        if not silence: print("Layer 1 optimization...")
         opt_params, energies = run_optimization(
             cost_function=cost_function_p(1),
             init_params=init_params, 
@@ -39,6 +46,7 @@ def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence)
             steps=opt_steps,
             silence=silence
             )
+        if not silence: print(energies)
         if not silence: plot_energies(energies)
         best_energy_ps = [energies]
         return opt_params, best_energy_ps
@@ -49,8 +57,9 @@ def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence)
         optimizer=optimizer, 
         opt_steps=opt_steps, 
         q=q-1, 
-        silence=silence)
-    print(f"Layer {q} optimization...")
+        silence=silence
+        )
+    if not silence: print(f"Layer {q} optimization...")
     new_params = linear_interpolation(prev_layer_params, q-1)
     init_params = np.array(new_params, requires_grad=True)
     opt_params, energies = run_optimization(
@@ -62,6 +71,7 @@ def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence)
             )
     best_energy_ps.append(energies)
     if not silence: plot_energies(energies)
+    if not silence: print(energies)
     return opt_params, best_energy_ps
 
 def interp_pt(cost_function_p, strategy, apparatus, silence=True):

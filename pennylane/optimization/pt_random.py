@@ -1,9 +1,16 @@
+"""
+optimization/pt_random.py
+===============
+"RANDOM" parameter restart framework.
+"""
+
 # ======================================================================================== #
 #                                         'random'                                         #
 # ======================================================================================== #
 
-from circuit.warm_start import random_init_param
-from .optimization_process import run_optimization, plot_energies
+import circuit.warm_start as ws
+from .optimization_process import run_optimization
+from plotting import plot_energies
 
 def param_restarts(cost_function, n_restarts, p, optimizer, opt_steps, nb_params, nb_sin, silence):
     best_params = None
@@ -11,7 +18,7 @@ def param_restarts(cost_function, n_restarts, p, optimizer, opt_steps, nb_params
     best_energy_ps = []
     for i in range(n_restarts):
         if not silence: print(f"Restart {i}")
-        init_params_i = random_init_param(p, nb_params, nb_sin)
+        init_params_i = ws.random_init_param(p, nb_params, nb_sin)
         optimal_params, energies = run_optimization(
             cost_function=cost_function,
             init_params=init_params_i, 

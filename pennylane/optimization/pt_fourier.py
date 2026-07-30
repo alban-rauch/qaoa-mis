@@ -1,11 +1,18 @@
+"""
+optimization/pt_fourier.py
+===============
+"FOURIER" parameter transfer framework.
+"""
+
 # ======================================================================================== #
 #                                     'fourier(q, r)'                                      #
 # ======================================================================================== #
 
 from pennylane import numpy as np
 
-from circuit.warm_start import mixed_init_param
-from .optimization_process import run_optimization, plot_energies
+import circuit.warm_start as ws
+from .optimization_process import run_optimization
+from plotting import plot_energies
 
 def fourier_to_params(uvetc, p, sin_nb=1):
     uvetc = [np.atleast_1d(u) for u in uvetc]
@@ -73,7 +80,7 @@ def fourier_params(
         # --- L-chain --- #
         
         if p == 1:
-            init_coeffs = np.array(mixed_init_param(1, init_param), requires_grad=True)
+            init_coeffs = np.array(ws.mixed_init_param(1, init_param), requires_grad=True)
         else:
             init_coeffs = pad_uv(coeffsL, q_p)
 

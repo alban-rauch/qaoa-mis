@@ -4,13 +4,13 @@ main.py
 Main file.
 """
 
-import pennylane as qp
 import numpy as np
 from matplotlib import pyplot as plt
 
 import graphs as gph
 import data_analysis.variance_landscape as vl
 import qaoa_run as qr
+import test as tst
 
 
 # ================================================================ #
@@ -30,7 +30,7 @@ strategy_config = {
     "relaxation_type": 'continuous',    #  None | 'continuous'
     "param_transfer_type": 'interp',    # 'random' | 'interp' | 'fourier'
     "fourier_qR": (None, 5),
-    "init_param": [1.0, 0.5],
+    "init_param": [0.55, 0.27],
     "mixers": ["x"],
 }
 
@@ -45,36 +45,30 @@ apparatus_config = {
 
 strategy_config["relaxation_type"] = 'continuous'
 
-one_qaoa_run = qr.run_qaoa(
-        problem=problem_config,
-        strategy=strategy_config,
-        apparatus=apparatus_config,
-    )
+# one_qaoa_run = qr.run_qaoa(
+#         problem=problem_config,
+#         strategy=strategy_config,
+#         apparatus=apparatus_config,
+#         silence=False
+#     )
 
-print(one_qaoa_run)
+# print(one_qaoa_run)
 
 
-params = np.linspace(0.0, 1.0, 100)
-approx_ratios = []
-
-for param in params:
-    strategy_config["init_param"] = [2.0 * param, 1.0 * param]
-    one_qaoa_run = qr.run_qaoa(
+data_mat = tst.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
         apparatus=apparatus_config,
         silence=True
     )
 
-    ar = one_qaoa_run["approximation_ratio"]
-    approx_ratios.append(ar)
-    print(f"{param} done")
+tst.heatmap(data_mat)
 
-plt.plot(params, np.array(approx_ratios))
-plt.xlabel("Initial parameters")
-plt.ylabel("Approximation ratio")
-plt.grid(alpha=0.3)
-plt.show()
+# plt.plot(params, np.array(approx_ratios))
+# plt.xlabel("Initial parameters")
+# plt.ylabel("Approximation ratio")
+# plt.grid(alpha=0.3)
+# plt.show()
 
 
 # for p in range(1, 6):

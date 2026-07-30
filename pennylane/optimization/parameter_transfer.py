@@ -1,3 +1,9 @@
+"""
+optimization/parameter_transfer.py
+===============
+Registry to access the desired parameter transfer framework.
+"""
+
 from dataclasses import dataclass
 from typing import Callable
 

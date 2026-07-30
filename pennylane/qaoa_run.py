@@ -4,16 +4,17 @@ qaoa_run.py
 One full run of QAOA.
 """
 
-import pennylane as qp
+import pennylane as qml
 from pennylane import numpy as np
 
 from functools import partial
 from matplotlib import pyplot as plt
 
 import graphs as gph
+from plotting import energy_evolution
 import classical as clas
+import circuit.ansatz as ans
 import circuit.warm_start as ws
-import circuit.ansatz as qa
 from circuit.mixers import MIXER_REGISTRY
 from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
 
@@ -24,7 +25,7 @@ def build_hamiltonians(graph, penalizer, constrained, relaxation_type, mixer_nam
     degrees = {i: graph.degree(i) for i in node_list}
     wires = range(len(node_list))
     
-    cost_h = qa.cost_hamiltonian(node_list, edge_list, degrees, penalizer)
+    cost_h = ans.cost_hamiltonian(node_list, edge_list, degrees, penalizer)
 
     angles = ws.relaxation_angles(graph, wires, eps=0.25) if relaxation_type == 'continuous' else [0.5 * np.pi] * len(wires)
     mixer_fns = [MIXER_REGISTRY[name].build(graph, angles, constrained) for name in mixer_names]
@@ -33,8 +34,8 @@ def build_hamiltonians(graph, penalizer, constrained, relaxation_type, mixer_nam
 
 
 def estimation_framework(wires, p, dev, circuit, cost_h, mixer_fns, angles):
-    cost_qnode = qp.QNode(
-        qa.estimator,
+    cost_qnode = qml.QNode(
+        ans.estimator,
         device=dev,
         diff_method="adjoint",  # or "parameter-shift"
         shots=None
@@ -52,8 +53,8 @@ def estimation_framework(wires, p, dev, circuit, cost_h, mixer_fns, angles):
 
 
 def sampling_framework(wires, p, dev, sampler_shots, circuit, cost_h, mixer_fns, angles):
-    sampling_qnode = qp.QNode(
-        qa.sampler,
+    sampling_qnode = qml.QNode(
+        ans.sampler,
         device=dev,
         shots=sampler_shots
     )
@@ -76,13 +77,14 @@ def extract_solutions(graph, probs, best_energies, penalizer, wires, silence):
     most_likely_idx = np.argmax(probs)
     most_likely_bin = [(most_likely_idx >> i) & 1 for i in reversed(range(len(wires)))]
     most_likely_bitstring = clas.list_to_string(most_likely_bin)
+
     if not silence:
         print("Optimal:", most_likely_bin)
         gph.draw_select(graph, most_likely_bin)
         plt.show()
 
     best_energy = best_energies[-1]
-    best_cost = qa.energy_to_cost(best_energy, penalizer, node_list, edge_list)
+    best_cost = ans.energy_to_cost(best_energy, penalizer, node_list, edge_list)
 
     theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
     approximation_ratio = best_cost / theo_best_cost
@@ -103,17 +105,12 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
     constrained = strategy["constrained"]
     penalizer = 1.5 if not constrained else 0.0
     relaxation_type = strategy["relaxation_type"]
-    param_transfer_type = strategy["param_transfer_type"]
-    fourier_q, fourier_R = strategy["fourier_qR"]
-    init_param = strategy["init_param"]
     mixer_fns = strategy["mixers"]
 
     p = apparatus["p"]
     device = apparatus["device"]
     estimator_shots = apparatus["estimator_shots"]
     sampler_shots = apparatus["sampler_shots"]
-    optimizer = apparatus["optimizer"]
-    opt_steps = apparatus["opt_steps"]
 
 
     # -----------------  STEP 1:  Build QAOA ansatz  ----------------- #
@@ -126,9 +123,9 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         mixer_fns
         )
 
-    circuit = qa.make_circuit(qa.qaoa_layer)
+    circuit = ans.make_circuit(ans.qaoa_layer)
 
-    dev = qp.device(device, wires=wires)
+    dev = qml.device(device, wires=wires)
 
     cost_qnode, cost_function = estimation_framework(
         wires,
@@ -164,40 +161,11 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
     best_params, best_energies, best_energy_ps = param_transfer_fn(
         cost_function_p, strategy, apparatus, silence=silence
     )
- 
+
 
     if not silence:
-        plt.style.use("default")
-        theo_best_cost, _ = clas.best_config_branch_bound(graph)
-        costs = [[qa.energy_to_cost(energy_val, penalizer, graph.nodes, graph.edges) / theo_best_cost 
-                    for energy_val in sublist] 
-                    for sublist in best_energy_ps]
-        length = len(costs)
-        cmap = plt.colormaps['cividis']
-        colors = [cmap(i / (length - 1)) for i in range(length)] if length > 1 else [cmap(0)]
-        current_x = 0
-        plt.figure(figsize=(10, 5))
-        current_x = 0
-        for i in range(length):
-            segment = costs[i]
-            x_coords = [current_x + j for j in range(len(segment))]
-            plt.plot(x_coords, segment, color=colors[i], linewidth=2)
-            current_x += len(segment) - 1
-
-        plt.title("Energy optimization by step for interp")
-        plt.xlabel("Step")
-        plt.ylabel("Approximation Ratio")
-
-        plt.gca().set_facecolor("white")
-        plt.minorticks_on()
-
-        plt.grid(True, which="major", linestyle="-", linewidth=0.6, color="#898989", alpha=0.8)
-        plt.grid(True, which="minor", linestyle=":", linewidth=0.4, color="#b9b9b9", alpha=0.7)
-
-        plt.tight_layout()
-        plt.show()
-
-    if not silence: print("Optimal Parameters:", best_params)
+        energy_evolution(graph, best_energy_ps, penalizer)
+        print("Optimal Parameters:", best_params)
 
     # ----------------------  STEP 3: Sampling  ---------------------- #
 
@@ -227,3 +195,4 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         "approximation_ratio": approximation_ratio,
         "success": success,
     }
+

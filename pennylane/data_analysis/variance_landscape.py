@@ -4,7 +4,6 @@ variance_landscape.py
 File to plot the energy variance lanscape around an optimal parameter value theta_0.
 """
 
-import pennylane as qp
 from pennylane import numpy as np
 import matplotlib.pyplot as plt
 

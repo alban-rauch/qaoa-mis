@@ -1,5 +1,5 @@
 
-import pennylane as qp
+import pennylane as qml
 from pennylane import numpy as np
 from matplotlib import pyplot as plt
 
@@ -140,7 +140,7 @@ def make_cost_function_builder(constrained, relaxation_type, device):
             relaxation_type, 
             )
         
-        dev = qp.device(device, wires=wires)
+        dev = qml.device(device, wires=wires)
         _, cost_function = qr.estimation_framework(
             wires,
             p, 
@@ -162,7 +162,7 @@ def gradient_variance_scan(cost_function_builder, N_values, p_values, n_graphs=5
             grad0_samples = []
             for _ in range(n_graphs):
                 cost_fn = cost_function_builder(p, N)
-                grad_fn = qp.grad(cost_fn)
+                grad_fn = qml.grad(cost_fn)
                 for _ in range(n_samples):
                     params = ws.random_init_param(p)
                     g = grad_fn(params)

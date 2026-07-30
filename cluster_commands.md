@@ -37,10 +37,9 @@
 #### <font color="yellow"> Interactive run: </font>
 ```
 salloc -p PARTITION --time=HH:MM:SS
-module load gcc/13.3.0 Rocm/7.1.1 python/3.11.13 pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
-source ~/qaoa_env/bin/activate
+module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 srun --pty bash
-srun python3 scripts/test.py
+srun python scripts/test.py
 ```
 
 #### <font color="yellow"> Batch job: </font>
@@ -63,13 +62,11 @@ sbatch SLURM_SCRIPT
 ################################################################################################
 
 module purge
-module load gcc/13.3.0 Rocm/7.1.1 python/3.11.13 pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
-
-source ~/qaoa_env/bin/activate
+module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
 cd ~/test
 
-python3 scripts/test.py
+python scripts/test.py
 ```
 
 Add if necessary: \
@@ -77,6 +74,7 @@ Add if necessary: \
 `#SBATCH --ntasks-per-node=4` \
 `#SBATCH --gpus-per-node=4`
 
+`source ~/qaoa_env/bin/activate`
 `module load python/3.12.13.rocm`
 
 
