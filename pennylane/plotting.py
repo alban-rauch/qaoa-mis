@@ -40,4 +40,4 @@ def energy_evolution(graph, best_energy_ps, penalizer):
     plt.grid(True, which="minor", linestyle=":", linewidth=0.4, color="#b9b9b9", alpha=0.7)
 
     plt.tight_layout()
-    plt.show()
+    plt.show()    

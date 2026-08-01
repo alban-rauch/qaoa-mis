@@ -46,7 +46,6 @@ def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence)
             steps=opt_steps,
             silence=silence
             )
-        if not silence: print(energies)
         if not silence: plot_energies(energies)
         best_energy_ps = [energies]
         return opt_params, best_energy_ps

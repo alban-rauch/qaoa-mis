@@ -28,10 +28,10 @@ problem_config = {
 strategy_config = {
     "constrained": False,
     "relaxation_type": 'continuous',    #  None | 'continuous'
-    "param_transfer_type": 'interp',    # 'random' | 'interp' | 'fourier'
+    "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
     "fourier_qR": (None, 5),
-    "init_param": [0.55, 0.27],
-    "mixers": ["x"],
+    "init_param": [0.55, 0.27, 0.11],
+    "mixers": ["x", "y"],
 }
 
 apparatus_config = {
@@ -43,26 +43,30 @@ apparatus_config = {
     "opt_steps": 400,
 }
 
-strategy_config["relaxation_type"] = 'continuous'
-
-# one_qaoa_run = qr.run_qaoa(
-#         problem=problem_config,
-#         strategy=strategy_config,
-#         apparatus=apparatus_config,
-#         silence=False
-#     )
-
-# print(one_qaoa_run)
-
-
-data_mat = tst.run_qaoa(
+one_qaoa_run = qr.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
         apparatus=apparatus_config,
-        silence=True
+        silence=False
     )
 
-tst.heatmap(data_mat)
+print(one_qaoa_run)
+
+
+# --------------- HEATMAP --------------- #
+
+# data_mat = tst.run_qaoa(
+#         problem=problem_config,
+#         strategy=strategy_config,
+#         apparatus=apparatus_config,
+#         silence=True
+#     )
+
+# for q in range(1, p+1):
+#     tst.heatmap(data_mat[q])
+
+# --------------------------------------- #
+
 
 # plt.plot(params, np.array(approx_ratios))
 # plt.xlabel("Initial parameters")

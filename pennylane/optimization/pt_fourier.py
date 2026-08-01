@@ -30,11 +30,11 @@ def fourier_to_params(uvetc, p, sin_nb=1):
     return np.array(params)
 
 
-def cost_function_fourier(base_cost_function_p, p):
+def cost_function_fourier(base_cost_function_p, p, sin_nb):
     base_cost = base_cost_function_p(p)
 
     def cost(params_uv):
-        params = fourier_to_params(params_uv, p)
+        params = fourier_to_params(params_uv, p, sin_nb)
         return base_cost(params)
     
     return cost

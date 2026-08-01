@@ -175,3 +175,17 @@ Devices:
 * "qulacs.simulator" (qulacs)
 * "lightning.qubit"  (CPU)
 * "lightning.amdgpu" (AMD GPU)
+
+
+## Github
+
+Clone existing repository: `git clone https://github.com/alban-rauch/QAOA.git`
+Check modified/created/deleted files: `git status`
+Stage file for commit `git add file.py` (all files: `git add .`)
+Commit staged changes: `git commit -m "Message."`
+Upload local commits on github: `git push origin main`
+
+Download latest changes into local branch: `git pull origin main`
+List all branches: `git branch`
+Create and switch to a new branch: `git checkout -b feature-branch`
+Switch back to an existing branch: `git checkout main`
