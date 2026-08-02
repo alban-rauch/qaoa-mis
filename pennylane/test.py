@@ -76,11 +76,11 @@ def run_qaoa(problem, strategy, apparatus, silence=True):
 
     param_transfer_fn = PARAM_TRANSFER_REGISTRY[strategy["param_transfer_type"]].build
 
-    map_mat = np.zeros((p, 10, 10))
+    map_mat = np.zeros((p, 11, 11))
 
     for q in range(1, p+1):
-        for i in range(10):
-            for j in range(10):
+        for i in range(11):
+            for j in range(11):
                 strategy["init_param"] = [i * 2 * np.pi / 100, j * np.pi / 100]
 
                 best_params, best_energies, best_energy_ps = param_transfer_fn(
@@ -113,7 +113,7 @@ def run_qaoa(problem, strategy, apparatus, silence=True):
                     )
 
                 map_mat[q, i, j] = approximation_ratio
-                print(f"{(i,j)} done")
+                print(f"{(i, j)} done")
         map_mat[q, :, :] = map_mat[q, :, :].T
     return map_mat
 
