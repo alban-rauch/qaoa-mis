@@ -117,12 +117,12 @@ def run_qaoa(problem, strategy, apparatus, silence=True):
         map_mat[q, :, :] = map_mat[q, :, :].T
     return map_mat
 
-def heatmap(data_mat):
+def heatmap(data_mat, name):
     sns.heatmap(data_mat, annot=False, cmap="coolwarm", cbar=True)
 
     plt.xlabel("gamma")
     plt.ylabel("beta")
-    plt.show()
+    plt.savefig(name)
 
 # rng = np.random.default_rng()
 # data_mat = rng.random((10, 10))

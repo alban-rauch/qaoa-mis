@@ -43,27 +43,28 @@ apparatus_config = {
     "opt_steps": 400,
 }
 
-one_qaoa_run = qr.run_qaoa(
-        problem=problem_config,
-        strategy=strategy_config,
-        apparatus=apparatus_config,
-        silence=False
-    )
+# one_qaoa_run = qr.run_qaoa(
+#         problem=problem_config,
+#         strategy=strategy_config,
+#         apparatus=apparatus_config,
+#         silence=False
+#     )
 
-print(one_qaoa_run)
+# print(one_qaoa_run)
 
 
 # --------------- HEATMAP --------------- #
 
-# data_mat = tst.run_qaoa(
-#         problem=problem_config,
-#         strategy=strategy_config,
-#         apparatus=apparatus_config,
-#         silence=True
-#     )
+data_mat = tst.run_qaoa(
+        problem=problem_config,
+        strategy=strategy_config,
+        apparatus=apparatus_config,
+        silence=True
+    )
+np.savez("data_mat.npz", data_mat=data_mat)
 
-# for q in range(1, p+1):
-#     tst.heatmap(data_mat[q])
+for q in range(1, p+1):
+    tst.heatmap(data_mat[q], f"data_mat_p={q}")
 
 # --------------------------------------- #
 
