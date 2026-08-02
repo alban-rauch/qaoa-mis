@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 
 import qaoa_run as qr
 import circuit.ansatz as ans
+import circuit.warm_start as ws
+import classical as clas
 
 from plotting import energy_evolution
 import circuit.ansatz as ans
@@ -78,51 +80,54 @@ def run_qaoa(problem, strategy, apparatus, silence=True):
 
     map_mat = np.zeros((p, 11, 11))
 
+    
+    for i in range(11):
+        for j in range(11):
+            strategy["init_param"] = [i * 2 * np.pi / 10, j * np.pi / 10]
+
+            best_params, best_energies, best_energy_ps = param_transfer_fn(
+                cost_function_p, strategy, apparatus, silence=silence
+            )
+
+
+            if not silence:
+                energy_evolution(graph, best_energy_ps, penalizer)
+                print("Optimal Parameters:", best_params)
+
+    # ----------------------  STEP 3: Sampling  ---------------------- #
+
+            probs = probability_circuit(best_params)
+
+            if not silence:
+                plt.style.use("seaborn-v0_8") 
+                plt.bar(range(2 ** len(wires)), probs)
+                plt.show()
+
+    # ------------------  STEP 4: Extract solution  ------------------ #
+
+            theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
+            for q in range(1, p+1):
+                energy = best_energy_ps[q-1][-1]
+                approximation_ratio = qr.approx_ratio(graph, energy, penalizer, theo_best_cost)
+                map_mat[q-1, i, j] = approximation_ratio
+                print(f"{(i, j, q)} done")
+
+    # ---------------------------  Output  --------------------------- #
+
     for q in range(1, p+1):
-        for i in range(11):
-            for j in range(11):
-                strategy["init_param"] = [i * 2 * np.pi / 100, j * np.pi / 100]
+        map_mat[q-1, :, :] = map_mat[q-1, :, :].T
 
-                best_params, best_energies, best_energy_ps = param_transfer_fn(
-                    cost_function_p, strategy, apparatus, silence=silence
-                )
-
-
-                if not silence:
-                    energy_evolution(graph, best_energy_ps, penalizer)
-                    print("Optimal Parameters:", best_params)
-
-                # ----------------------  STEP 3: Sampling  ---------------------- #
-
-                probs = probability_circuit(best_params)
-                
-                if not silence:
-                    plt.style.use("seaborn-v0_8") 
-                    plt.bar(range(2 ** len(wires)), probs)
-                    plt.show()
-
-                # ------------------  STEP 4: Extract solution  ------------------ #
-
-                best_energy, approximation_ratio, success = qr.extract_solutions(
-                    graph, 
-                    probs, 
-                    best_energies, 
-                    penalizer, 
-                    wires, 
-                    silence
-                    )
-
-                map_mat[q, i, j] = approximation_ratio
-                print(f"{(i, j)} done")
-        map_mat[q, :, :] = map_mat[q, :, :].T
     return map_mat
 
+
 def heatmap(data_mat, name):
+    plt.figure()
     sns.heatmap(data_mat, annot=False, cmap="coolwarm", cbar=True)
 
     plt.xlabel("gamma")
     plt.ylabel("beta")
     plt.savefig(name)
+    plt.close()
 
 # rng = np.random.default_rng()
 # data_mat = rng.random((10, 10))

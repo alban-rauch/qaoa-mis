@@ -70,7 +70,6 @@ def interp_params(cost_function_p, init_param, optimizer, opt_steps, q, silence)
             )
     best_energy_ps.append(energies)
     if not silence: plot_energies(energies)
-    if not silence: print(energies)
     return opt_params, best_energy_ps
 
 def interp_pt(cost_function_p, strategy, apparatus, silence=True):

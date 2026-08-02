@@ -63,8 +63,11 @@ data_mat = tst.run_qaoa(
     )
 np.savez("data_mat.npz", data_mat=data_mat)
 
+data_file = np.load("data_mat.npz")
+data_mat = data_file["data_mat"]
+
 for q in range(1, p+1):
-    tst.heatmap(data_mat[q], f"data_mat_p={q}")
+    tst.heatmap(data_mat[q-1], f"data_mat_p={q}")
 
 # --------------------------------------- #
 

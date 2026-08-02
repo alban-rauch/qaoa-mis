@@ -69,11 +69,14 @@ def sampling_framework(wires, p, dev, sampler_shots, circuit, cost_h, mixer_fns,
     )
     return sampling_qnode, probability_circuit
 
-
-def extract_solutions(graph, probs, best_energies, penalizer, wires, silence):
+def approx_ratio(graph, best_energy, penalizer, theo_best_cost):
     node_list = list(graph.nodes)
     edge_list = list(graph.edges)
+    best_cost = ans.energy_to_cost(best_energy, penalizer, node_list, edge_list)
+    approximation_ratio = best_cost / theo_best_cost
+    return approximation_ratio
 
+def extract_solutions(graph, wires, probs, theo_best_config, silence):
     most_likely_idx = np.argmax(probs)
     most_likely_bin = [(most_likely_idx >> i) & 1 for i in reversed(range(len(wires)))]
     most_likely_bitstring = clas.list_to_string(most_likely_bin)
@@ -83,15 +86,9 @@ def extract_solutions(graph, probs, best_energies, penalizer, wires, silence):
         gph.draw_select(graph, most_likely_bin)
         plt.show()
 
-    best_energy = best_energies[-1]
-    best_cost = ans.energy_to_cost(best_energy, penalizer, node_list, edge_list)
-
-    theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
-    approximation_ratio = best_cost / theo_best_cost
-
     success = most_likely_bitstring in theo_best_config
 
-    return best_energy, approximation_ratio, success
+    return most_likely_bitstring, success
 
 
 def run_qaoa(problem, strategy, apparatus, silence=False):
@@ -178,14 +175,14 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ------------------  STEP 4: Extract solution  ------------------ #
 
-    best_energy, approximation_ratio, success = extract_solutions(
-        graph, 
-        probs, 
-        best_energies, 
-        penalizer, 
-        wires, 
-        silence
-        )
+    theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
+    best_energy = best_energies[-1]
+    approximation_ratio = approx_ratio(graph, best_energy, penalizer, theo_best_cost)
+    most_likely_bitstring, success = extract_solutions(
+        graph, wires, probs, theo_best_config, silence
+    )
+
+    # ---------------------------  Output  --------------------------- #
 
     return {
         "cost_function": cost_function,
