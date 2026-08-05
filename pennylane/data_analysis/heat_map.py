@@ -1,5 +1,4 @@
 import numpy as np
-import seaborn as sns
 from matplotlib import pyplot as plt
 
 data_file = np.load("data_mat.npz")
@@ -8,14 +7,15 @@ p = len(data_mat)
 
 def heatmap(data_mat, name):
     plt.figure()
-    sns.heatmap(
+    im = plt.imshow(
         data_mat, 
-        annot=False, 
         cmap="RdYlGn", 
         vmin=0.0, 
         vmax=1.0, 
-        cbar=True
+        aspect="auto",
+        origin="lower"
     )
+    plt.colorbar(im)
     plt.xlabel("gamma")
     plt.ylabel("beta")
     plt.savefig(name)

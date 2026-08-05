@@ -1,14 +1,17 @@
 #!/bin/bash
-
-#SBATCH --job-name=quantum_sim      # Job name
-#SBATCH --partition=gpu             # Target cluster partition (cpu, gpu, debug)
-#SBATCH --nodes=1                   # Isolate 1 physical computer node
-#SBATCH --gres=gpu:1                # Allocate 1 AMD GPU (MI350P or Radeon 9700)
+################################################################################################
+#SBATCH -J quantum_sim              # Job name               (or --job-name=quantum_sim)
+#SBATCH -p MI350P_600W             # Partition name         (or --partition=0745-1R5600-NOIB)
+#SBATCH -N 1                        # Nodes requested        (or --nodes=1)
+#SBATCH --exclusive                 # Resource not shared with other users
 #SBATCH --time=00:10:00             # Time limit
-#SBATCH --output=outputs/%x_%j.out  # Output file (where prints go)
-#SBATCH --error=outputs/%x_%j.err   # Error log file
+#SBATCH --output=outputs/%x_%j.out  # Output file
+#SBATCH --error=outputs/%x_%j.err   # Error file
+################################################################################################
 
+module purge
+module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
-module load rocm python
+cd ~/test
 
-python scripts/$1
+python scripts/bell_state.py
