@@ -1,7 +1,7 @@
 import pennylane as qp
 from pennylane import numpy as np
 
-dev = qp.device("lightning.qubit", wires=1)
+dev = qp.device("lightning.amdgpu", wires=1)
 
 @qp.qnode(dev)
 def rotate_qubit(phi1, phi2):

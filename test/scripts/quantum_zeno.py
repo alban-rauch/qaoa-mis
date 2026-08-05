@@ -8,7 +8,7 @@ n_repeats = 30
 qubits = 10
 dts = np.linspace(0, np.pi, qubits)
 
-dev = qp.device("lightning.qubit", wires=qubits)
+dev = qp.device("lightning.amdgpu", wires=qubits)
 
 @qp.qnode(dev)
 def zeno_circuit(n_repeats, dts):

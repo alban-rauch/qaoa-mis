@@ -1,6 +1,6 @@
 import pennylane as qp
 
-dev = qp.device("lightning.qubit", wires=2)
+dev = qp.device("lightning.amdgpu", wires=2)
 
 @qp.qnode(dev)
 def bell_state_circuit():

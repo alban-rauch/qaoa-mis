@@ -1,7 +1,7 @@
 import pennylane as qp
 from pennylane import numpy as np
 
-dev = qp.device("lightning.qubit", wires=10)
+dev = qp.device("lightning.amdgpu", wires=10)
 
 def circ_layer(t):
     qp.RX(t*np.pi, wires=0)

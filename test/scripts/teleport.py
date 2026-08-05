@@ -1,7 +1,7 @@
 import pennylane as qp
 import numpy as np
 
-dev = qp.device("lightning.qubit", wires=3)
+dev = qp.device("lightning.amdgpu", wires=3)
 
 @qp.qnode(dev)
 def teleportation_circuit(theta):
