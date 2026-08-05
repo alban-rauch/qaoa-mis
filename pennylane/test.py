@@ -2,6 +2,7 @@ import pennylane as qml
 from pennylane import numpy as np
 from functools import partial
 from matplotlib import pyplot as plt
+import seaborn as sns
 
 import qaoa_run as qr
 import circuit.ansatz as ans
@@ -12,7 +13,6 @@ from plotting import energy_evolution
 import circuit.ansatz as ans
 from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
 
-import seaborn as sns
 
 def run_qaoa(problem, strategy, apparatus, silence=True):
 
