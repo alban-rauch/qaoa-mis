@@ -78,12 +78,12 @@ def run_qaoa(problem, strategy, apparatus, silence=True):
 
     param_transfer_fn = PARAM_TRANSFER_REGISTRY[strategy["param_transfer_type"]].build
 
-    map_mat = np.zeros((p, 11, 11))
+    map_mat = np.zeros((p, 21, 21))
 
     
-    for i in range(11):
-        for j in range(11):
-            strategy["init_param"] = [i * 2 * np.pi / 10, j * np.pi / 10]
+    for i in range(21):
+        for j in range(21):
+            strategy["init_param"] = [i * 2 * np.pi / 20, j * np.pi / 20]
 
             best_params, best_energies, best_energy_ps = param_transfer_fn(
                 cost_function_p, strategy, apparatus, silence=silence
@@ -122,8 +122,14 @@ def run_qaoa(problem, strategy, apparatus, silence=True):
 
 def heatmap(data_mat, name):
     plt.figure()
-    sns.heatmap(data_mat, annot=False, cmap="coolwarm", cbar=True)
-
+    sns.heatmap(
+        data_mat, 
+        annot=False, 
+        cmap="RdYlGn", 
+        vmin=0.0, 
+        vmax=1.0, 
+        cbar=True
+    )
     plt.xlabel("gamma")
     plt.ylabel("beta")
     plt.savefig(name)

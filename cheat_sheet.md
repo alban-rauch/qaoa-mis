@@ -189,3 +189,24 @@ Download latest changes into local branch: `git pull origin main`
 List all branches: `git branch`
 Create and switch to a new branch: `git checkout -b feature-branch`
 Switch back to an existing branch: `git checkout main`
+
+### Branch commands
+
+### View
+List all branches: `git branch -a`
+
+#### Create branch
+Create new branch: `git branch NAME`
+Switch to existing branch: `git switch NAME`
+In one go: `git switch -c NAME`
+
+#### Commit and publish
+Commit: `git commit -m "Add feature x"`
+Publish: `git push -u origin NAME`
+
+#### Clean up
+Delete branch: `git switch main / git push origin --delete NAME`
+
+#### What is this
+Merge feature changes into main: `git switch main / git pull origin main`
+Bring updates from GitHub into current branch: `git pull origin main`
