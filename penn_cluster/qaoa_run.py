@@ -191,6 +191,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
     # ---------------------------  Output  --------------------------- #
 
     return {
+        "relax_angles": angles,
         "cost_function": cost_function,
         "cost_hamiltonian": cost_h,
         "best_params": best_params,

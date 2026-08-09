@@ -12,6 +12,7 @@ import qaoa_run as qr
 import circuit.ansatz as ans
 import circuit.warm_start as ws
 import auxiliary.classical as clas
+import auxiliary.graphs as gph
 
 import circuit.ansatz as ans
 from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
@@ -134,3 +135,38 @@ def generate_mat(problem_config, strategy_config, apparatus_config, num_samples,
     )
     filename = f"data_mat_{id_name}"
     np.savez(filename, parameters=parameters, data_mat=data_mat)
+
+
+
+
+N = 12
+p = 5
+
+problem_config = {
+    "N": N,
+    "graph": gph.randomGilbert(N, 0.25), # gph.randomDRegular(N, 3) | gph.randomGilbert(N, 0.25)
+}
+
+strategy_config = {
+    "constrained": False,
+    "relaxation_type": 'continuous',    #  None | 'continuous'
+    "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
+    "fourier_qR": (None, 5),
+    "init_param": [0.55, 0.27, 0.11],
+    "mixers": ["x", "y"],
+}
+
+apparatus_config = {
+    "p": p,
+    "device": "lightning.qubit",        # "lightning.qubit" | "lightning.amdgpu" 
+    "estimator_shots": 10000,
+    "sampler_shots": 10000,
+    "optimizer": "L-BFGS-B",            # "L-BFGS-B" | "Adam"
+    "opt_steps": 400,
+}
+
+for idx in range(10):
+    print("Graph sample", idx+1)
+    graph = gph.randomGilbert(N, 0.25)
+    problem_config["graph"] = graph
+    generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'{idx+1}')
