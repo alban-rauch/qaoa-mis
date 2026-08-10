@@ -6,7 +6,7 @@ import pennylane as qml
 from pennylane import numpy as np
 from functools import partial
 from matplotlib import pyplot as plt
-import seaborn as sns
+from pathlib import Path
 
 import qaoa_run as qr
 import circuit.ansatz as ans
@@ -14,7 +14,6 @@ import auxiliary.classical as clas
 import auxiliary.graphs as gph
 
 from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
-
 
 def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
@@ -119,7 +118,7 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     return np.transpose(map_mat, (0, 2, 1))
 
-def generate_mat(problem_config, strategy_config, apparatus_config, num_samples, id_name):
+def generate_mat(problem_config, strategy_config, apparatus_config, num_samples, filename):
     data_mat = run_qaoa(
             problem=problem_config,
             strategy=strategy_config,
@@ -130,9 +129,7 @@ def generate_mat(problem_config, strategy_config, apparatus_config, num_samples,
     parameters = np.array(
         [problem_config, strategy_config, apparatus_config]
     )
-    filename = f"data_mat_{id_name}"
     np.savez(filename, parameters=parameters, data_mat=data_mat)
-
 
 
 
@@ -163,12 +160,24 @@ apparatus_config = {
 }
 
 if __name__ == "__main__":
+
+    foldername = Path("plots/T1/5reg-N12-p5-(20x20)")
+    foldername.mkdir(parents=True, exist_ok=True)
     for idx in range(8):
         print(f"=== Graph sample {idx+1}/8 ===")
-        problem_config["graph"] = gph.randomDRegular(N, 3)
-        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'3-reg_{idx}')
-        problem_config["graph"] = gph.randomGilbert(N, 0.25)
-        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'Gilb_{idx}')
+        problem_config["N"] = 12
+        problem_config["graph"] = gph.randomDRegular(12, 5)
+        filename = foldername / f'data_file_{idx}.npz'
+        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, filename=filename)
+
+    foldername = Path("plots/T1/3reg-N8-p5-(20x20)")
+    foldername.mkdir(parents=True, exist_ok=True)
+    for idx in range(8):
+        print(f"=== Graph sample {idx+1}/8 ===")
+        problem_config["N"] = 8
+        problem_config["graph"] = gph.randomDRegular(8, 3)
+        filename = foldername / f'data_file_{idx}.npz'
+        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, filename=filename)
         
 
 # for idx in range(1):
