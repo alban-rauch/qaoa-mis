@@ -10,11 +10,9 @@ import seaborn as sns
 
 import qaoa_run as qr
 import circuit.ansatz as ans
-import circuit.warm_start as ws
 import auxiliary.classical as clas
 import auxiliary.graphs as gph
 
-import circuit.ansatz as ans
 from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
 
 
@@ -36,6 +34,7 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
     estimator_shots = apparatus["estimator_shots"]
     sampler_shots = apparatus["sampler_shots"]
 
+    counter = qr.CircuitCounter()
 
     # -----------------  STEP 1:  Build QAOA ansatz  ----------------- #
 
@@ -58,7 +57,8 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
         circuit,
         cost_h, 
         mixer_fns,
-        angles
+        angles,
+        counter
         )
 
     sampling_qnode, probability_circuit = qr.sampling_framework(
@@ -69,7 +69,8 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
         circuit,
         cost_h, 
         mixer_fns, 
-        angles
+        angles,
+        counter
         )
 
 
@@ -84,7 +85,7 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     map_mat = np.zeros((p, num_samples+1, num_samples+1))
 
-    
+    theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
     for i in range(num_samples+1):
         for j in range(num_samples+1):
             strategy["init_param"] = [i * 2 * np.pi / num_samples, j * np.pi / num_samples]
@@ -108,7 +109,6 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     # ------------------  STEP 4: Extract solution  ------------------ #
 
-            theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
             for q in range(1, p+1):
                 energy = best_energy_ps[q-1][-1]
                 approximation_ratio = qr.approx_ratio(graph, energy, penalizer, theo_best_cost)
@@ -117,10 +117,7 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     # ---------------------------  Output  --------------------------- #
 
-    for q in range(1, p+1):
-        map_mat[q-1, :, :] = map_mat[q-1, :, :].T
-
-    return map_mat
+    return np.transpose(map_mat, (0, 2, 1))
 
 def generate_mat(problem_config, strategy_config, apparatus_config, num_samples, id_name):
     data_mat = run_qaoa(
@@ -165,8 +162,23 @@ apparatus_config = {
     "opt_steps": 400,
 }
 
-for idx in range(10):
-    print("Graph sample", idx+1)
-    graph = gph.randomGilbert(N, 0.25)
-    problem_config["graph"] = graph
-    generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'{idx+1}')
+if __name__ == "__main__":
+    for idx in range(8):
+        print(f"=== Graph sample {idx+1}/8 ===")
+        problem_config["graph"] = gph.randomDRegular(N, 3)
+        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'3-reg_{idx}')
+        problem_config["graph"] = gph.randomGilbert(N, 0.25)
+        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'Gilb_{idx}')
+        
+
+# for idx in range(1):
+#     print("Graph sample", idx+1)
+#     graph = gph.randomDRegular(16, 3)
+#     problem_config["N"] = 16
+#     problem_config["graph"] = graph
+#     generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'N15d3')
+#     graph = gph.randomDRegular(12, 5)
+#     problem_config["N"] = 12
+#     problem_config["graph"] = graph
+#     generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'N12d5')
+    

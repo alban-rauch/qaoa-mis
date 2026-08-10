@@ -1,10 +1,13 @@
+from pathlib import Path
 import numpy as np
 from matplotlib import pyplot as plt
 
-foldername = "~/penn_cluster/plots/T1/3reg-N12-p5-(20x20)/"
-filename = "data_mat3reg_0.npz"
+SCRIPT_DIR = Path(__file__).resolve().parent
+foldername = "3reg-N12-p5-(20x20)-right"
+filename = "data_mat_3-reg_4.npz"
+file_path = SCRIPT_DIR / foldername / filename
 
-data_file = np.load(foldername + filename)
+data_file = np.load(file_path)
 data_mat = data_file["data_mat"]
 p = len(data_mat)
 
@@ -25,4 +28,5 @@ def heatmap(data_mat, name):
     plt.close()
 
 for q in range(1, p+1):
-    heatmap(data_mat[q-1], f"{filename}-p={q}")
+    image_path = SCRIPT_DIR / foldername / f"{filename}-p={q}.png"
+    heatmap(data_mat[q-1], image_path)

@@ -29,8 +29,8 @@ strategy_config = {
     "relaxation_type": 'continuous',    #  None | 'continuous'
     "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
     "fourier_qR": (None, 5),
-    "init_param": [0.55, 0.27, 0.11],
-    "mixers": ["x", "y"],
+    "init_param": [0.55, 0.27],
+    "mixers": ["x"],
 }
 
 apparatus_config = {
@@ -42,31 +42,14 @@ apparatus_config = {
     "opt_steps": 400,
 }
 
-# one_qaoa_run = qr.run_qaoa(
-#         problem=problem_config,
-#         strategy=strategy_config,
-#         apparatus=apparatus_config,
-#         silence=False
-#     )
+one_qaoa_run = qr.run_qaoa(
+        problem=problem_config,
+        strategy=strategy_config,
+        apparatus=apparatus_config,
+        silence=False
+    )
 
-# print(one_qaoa_run)
-
-
-# --------------- HEATMAP --------------- #
-    
-for idx in range(10):
-    print("Graph sample", idx+1)
-    graph = gph.randomGilbert(N, 0.25)
-    problem_config["graph"] = graph
-    tst.generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, id_name=f'{idx}')
-
-    # data_file = np.load("data_mat.npz")
-    # data_mat = data_file["data_mat"]
-
-    # for q in range(1, p+1):
-    #     tst.heatmap(data_mat[q-1], f"data_mat_p={q}")
-
-# --------------------------------------- #
+print(one_qaoa_run["cost_circuit_evals"])
 
 
 # plt.plot(params, np.array(approx_ratios))

@@ -157,7 +157,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     cost_function_p = lambda p: partial(
         cost_qnode, circuit=circuit, wires=wires, p=p, 
-        cost_h=cost_h, mixer_fns=mixer_fns, angles=angles
+        cost_h=cost_h, mixer_fns=mixer_fns, angles=angles, counter=counter,
     )
 
     param_transfer_fn = PARAM_TRANSFER_REGISTRY[strategy["param_transfer_type"]].build
