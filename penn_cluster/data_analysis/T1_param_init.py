@@ -5,7 +5,6 @@ data_analysis/param_init_test.py
 import pennylane as qml
 from pennylane import numpy as np
 from functools import partial
-from matplotlib import pyplot as plt
 from pathlib import Path
 
 import qaoa_run as qr
@@ -160,7 +159,6 @@ apparatus_config = {
 }
 
 if __name__ == "__main__":
-
     foldername = Path("plots/T1/5reg-N12-p5-(20x20)")
     foldername.mkdir(parents=True, exist_ok=True)
     for idx in range(8):

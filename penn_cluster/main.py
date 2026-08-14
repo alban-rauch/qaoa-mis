@@ -7,7 +7,6 @@ Main file.
 import numpy as np
 
 import auxiliary.graphs as gph
-# import data_analysis.variance_landscape as vl
 import qaoa_run as qr
 import data_analysis.T1_param_init as tst
 
@@ -39,17 +38,17 @@ apparatus_config = {
     "estimator_shots": 10000,
     "sampler_shots": 10000,
     "optimizer": "L-BFGS-B",            # "L-BFGS-B" | "Adam"
-    "opt_steps": 400,
+    "opt_steps": 1000,
 }
 
 one_qaoa_run = qr.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
         apparatus=apparatus_config,
-        silence=False
+        silence=True
     )
 
-print(one_qaoa_run["cost_circuit_evals"])
+print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
 
 
 # plt.plot(params, np.array(approx_ratios))

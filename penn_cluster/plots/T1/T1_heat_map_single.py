@@ -3,8 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-foldername = "3reg-N12-p5-(20x20)-right"
-filename = "data_mat_3-reg_4.npz"
+foldername = "Gilb0.25-N12-p5-(20x20)-right"
+filename = "data_mat_Gilb_7.npz"
 file_path = SCRIPT_DIR / foldername / filename
 
 data_file = np.load(file_path)
