@@ -16,4 +16,4 @@ module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
 cd ~/penn_cluster
 
-srun python data_analysis/speed_experiment.py
+python data_analysis/speed_experiment.py

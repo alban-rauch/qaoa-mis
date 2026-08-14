@@ -16,4 +16,4 @@ module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
 cd ~/test
 
-srun python -c "print('Hello')"
+python -c "print('Hello')"
