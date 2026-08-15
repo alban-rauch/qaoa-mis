@@ -1,0 +1,27 @@
+# Byte-compiled / DLL
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data
+*.npz
+*.npy
+*.csv
+*.h5
+*.pkl
+
+# Plots
+*.png
+*.jpg
+*.pdf
+
+# Slurm
+*.out
+*.err
+
+# Venvs
+.venv/
+venv/
+ENV/
+.vscode/
+.idea/
