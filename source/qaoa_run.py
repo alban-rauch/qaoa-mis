@@ -8,6 +8,7 @@ import pennylane as qml
 from pennylane import numpy as np
 
 from functools import partial
+import time
 
 import source.utils.classical as clas
 import source.circuit.ansatz as ans
@@ -117,6 +118,8 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # -----------------  STEP 1:  Build QAOA ansatz  ----------------- #
 
+    time0 = time.perf_counter()
+
     cost_h, mixer_fns, angles = build_hamiltonians(
         graph,
         penalizer, 
@@ -155,6 +158,8 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ----------------  STEP 2:  Optimize parameters  ---------------- #
 
+    time1 = time.perf_counter()
+
     cost_function_p = lambda p: partial(
         cost_qnode, circuit=circuit, wires=wires, p=p, 
         cost_h=cost_h, mixer_fns=mixer_fns, angles=angles, counter=counter,
@@ -173,6 +178,8 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ----------------------  STEP 3: Sampling  ---------------------- #
 
+    time2 = time.perf_counter()
+
     probs = probability_circuit(best_params)
     
     if not silence:
@@ -180,6 +187,8 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         pass
 
     # ------------------  STEP 4: Extract solution  ------------------ #
+
+    time3 = time.perf_counter()
 
     theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
     best_energy = best_energies[-1]
@@ -200,5 +209,6 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         "success": success,
         "cost_circuit_evals": counter.cost_circuit_evals,
         "sampling_circuit_evals": counter.sampling_circuit_evals,
+        "times": (time1 - time0, time2 - time1, time3 - time2)
     }
 

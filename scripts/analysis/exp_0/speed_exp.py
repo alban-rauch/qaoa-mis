@@ -10,12 +10,10 @@ import source.utils.graphs as gph
 import source.qaoa_run as qr
 from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
-N = 12
-p = 5
 
 problem_config = {
-    "N": N,
-    "graph": gph.randomDRegular(N, 3), # gph.randomDRegular(N, 3) | gph.randomGilbert(N, 0.25)
+    "N": None,
+    "graph": None, # gph.randomDRegular(N, 3) | gph.randomGilbert(N, 0.25)
 }
 
 strategy_config = {
@@ -28,7 +26,7 @@ strategy_config = {
 }
 
 apparatus_config = {
-    "p": p,
+    "p": None,
     "device": "lightning.qubit",        # "lightning.qubit" | "lightning.amdgpu" 
     "estimator_shots": 10000,
     "sampler_shots": 10000,
@@ -49,6 +47,8 @@ evals_stderr = np.zeros((len(N_values), len(p_values)))
 
 aratio_mean = np.zeros((len(N_values), len(p_values)))
 aratio_stderr = np.zeros((len(N_values), len(p_values)))
+
+random_graphs = 
 
 
 for N_idx, N in enumerate(N_values):

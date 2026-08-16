@@ -49,7 +49,7 @@ one_qaoa_run = qr.run_qaoa(
     )
 
 print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
-
+print("Times:", one_qaoa_run["times"])
 
 # plt.plot(params, np.array(approx_ratios))
 # plt.xlabel("Initial parameters")
