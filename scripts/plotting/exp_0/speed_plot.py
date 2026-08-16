@@ -1,7 +1,7 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
-from paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
+from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
 infile = DATA_DIR / "exp_0/speed_data.npz"
 outfile = RESULTS_DIR / "exp_0/qaoa_benchmark_results.png"

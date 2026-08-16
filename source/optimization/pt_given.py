@@ -8,7 +8,7 @@ Optimization with given parameter
 #                                         'given'                                          #
 # ======================================================================================== #
 
-import circuit.warm_start as ws
+import source.circuit.warm_start as ws
 from .optimization_process import run_optimization
 
 def given_opt(cost_function_p, strategy, apparatus, silence=True):

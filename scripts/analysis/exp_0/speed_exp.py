@@ -6,9 +6,9 @@ import numpy as np
 import time
 from pathlib import Path
 
-import utils.graphs as gph
-import qaoa_run as qr
-from paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
+import source.utils.graphs as gph
+import source.qaoa_run as qr
+from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
 N = 12
 p = 5

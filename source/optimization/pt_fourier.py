@@ -10,7 +10,7 @@ optimization/pt_fourier.py
 
 from pennylane import numpy as np
 
-import circuit.warm_start as ws
+import source.circuit.warm_start as ws
 from .optimization_process import run_optimization
 
 def fourier_to_params(uvetc, p, sin_nb=1):

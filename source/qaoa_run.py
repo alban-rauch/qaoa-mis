@@ -9,11 +9,11 @@ from pennylane import numpy as np
 
 from functools import partial
 
-import utils.classical as clas
-import circuit.ansatz as ans
-import circuit.warm_start as ws
-from circuit.mixers import MIXER_REGISTRY
-from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
+import source.utils.classical as clas
+import source.circuit.ansatz as ans
+import source.circuit.warm_start as ws
+from source.circuit.mixers import MIXER_REGISTRY
+from source.optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
 
 
 class CircuitCounter:

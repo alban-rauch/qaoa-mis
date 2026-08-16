@@ -8,7 +8,7 @@ optimization/pt_random.py
 #                                         'random'                                         #
 # ======================================================================================== #
 
-import circuit.warm_start as ws
+import source.circuit.warm_start as ws
 from .optimization_process import run_optimization
 
 def param_restarts(cost_function, n_restarts, p, optimizer, opt_steps, nb_params, nb_sin, silence):
