@@ -5,20 +5,20 @@ __pycache__/
 *.egg-info/
 
 # Data
-*.npz
-*.npy
-*.csv
-*.h5
-*.pkl
+# *.npz
+# *.npy
+# *.csv
+# *.h5
+# *.pkl
 
 # Plots
-*.png
-*.jpg
-*.pdf
+# *.png
+# *.jpg
+# *.pdf
 
 # Slurm
-*.out
-*.err
+# *.out
+# *.err
 
 # Venvs
 .venv/
