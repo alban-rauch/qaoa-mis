@@ -70,11 +70,11 @@ python scripts/test.py
 ```
 
 Work with slurm:
-`sbatch test_slurm.sh`: run
-`squeue -u $USER`: check job status
-`tail -f outputs/speed_test_123456.out`: watch live
-`scancel 123456`: cancel
-`scontrol show job 123456`: detailed info
+`sbatch test_slurm.sh`: run \
+`squeue -u $USER`: check job status \
+`tail -f data/outputs/speed_test_123456.out`: watch live \
+`scancel 123456`: cancel \
+`scontrol show job 123456`: detailed info \
 `seff 123456`: resource usage/efficiency
 
 Add if necessary: \
