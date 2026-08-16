@@ -88,7 +88,7 @@ for N_idx, N in enumerate(N_values):
         aratio_stderr[N_idx, p_idx] = (np.std(aratio_samples, ddof=1) / np.sqrt(num_samples))
 
 
-outfile = DATA_DIR / "exp_0/speed_data2.npz"
+outfile = DATA_DIR / "analysis_data/exp_0/speed_data2.npz"
 
 np.savez(
     outfile, 
