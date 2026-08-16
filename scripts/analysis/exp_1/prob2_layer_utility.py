@@ -1,6 +1,6 @@
 import numpy as np
-import src.auxiliary.graphs as gph
-from src.qaoa_run import run_qaoa
+import utils.graphs as gph
+from qaoa_run import run_qaoa
 
 
 def critical_density_test(

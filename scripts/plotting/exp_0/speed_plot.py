@@ -1,10 +1,12 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
+from paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-DATA_DIR = PROJECT_ROOT / "data/analysis_data"
 infile = DATA_DIR / "exp_0/speed_data.npz"
+outfile = RESULTS_DIR / "exp_0/qaoa_benchmark_results.png"
+
+
 data = np.load(infile)
 
 speed_mean = data["speed_mean"]
@@ -80,10 +82,6 @@ ax3.set_title("Number of evals vs. $N$", fontsize=12, fontweight="bold")
 ax3.set_xticks(N_values)
 ax3.grid(True, linestyle="--", alpha=0.6)
 ax3.legend(title="Depth", frameon=True)
-
-
-PLOT_DIR = PROJECT_ROOT / "results"
-outfile = PLOT_DIR / "qaoa_benchmark_results.png"
 
 
 plt.tight_layout()

@@ -6,8 +6,8 @@ Main file.
 
 import numpy as np
 
-import src.auxiliary.graphs as gph
-import src.qaoa_run as qr
+import utils.graphs as gph
+import qaoa_run as qr
 # import scripts.analysis.T1_param_init as tst
 
 

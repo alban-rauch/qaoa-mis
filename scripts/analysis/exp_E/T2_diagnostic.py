@@ -3,10 +3,10 @@ import pennylane as qml
 from pennylane import numpy as np
 from matplotlib import pyplot as plt
 
-import src.auxiliary.graphs as gph
-import src.circuit.warm_start as ws
-import src.circuit.ansatz as qa
-import src.qaoa_run as qr
+import utils.graphs as gph
+import circuit.warm_start as ws
+import circuit.ansatz as qa
+import qaoa_run as qr
 
 
 # ======================================================================================== #

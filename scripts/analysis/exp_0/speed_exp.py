@@ -6,9 +6,9 @@ import numpy as np
 import time
 from pathlib import Path
 
-import src.auxiliary.graphs as gph
-import src.qaoa_run as qr
-
+import utils.graphs as gph
+import qaoa_run as qr
+from paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
 N = 12
 p = 5
@@ -87,9 +87,8 @@ for N_idx, N in enumerate(N_values):
         aratio_mean[N_idx, p_idx] = (np.mean(aratio_samples))
         aratio_stderr[N_idx, p_idx] = (np.std(aratio_samples, ddof=1) / np.sqrt(num_samples))
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-DATA_DIR = PROJECT_ROOT / "data/analysis_data"
-outfile = DATA_DIR / "exp_0/speed_data.npz"
+
+outfile = DATA_DIR / "exp_0/speed_data2.npz"
 
 np.savez(
     outfile, 

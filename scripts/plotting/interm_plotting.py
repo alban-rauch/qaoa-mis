@@ -2,8 +2,8 @@
 from matplotlib import pyplot as plt
 import networkx as nx
 
-import src.auxiliary.classical as clas
-import src.circuit.ansatz as qa
+import utils.classical as clas
+import circuit.ansatz as qa
 
 ###### GRAPH ######
 

@@ -1,8 +1,8 @@
 import numpy as np
 
-import src.qaoa_run as qr
-import src.auxiliary.classical as clas
-import src.circuit.warm_start as ws
+import qaoa_run as qr
+import utils.classical as clas
+import circuit.warm_start as ws
 
 def random_gen_from_relax(d, N):
     bitstring = np.zeros(N)

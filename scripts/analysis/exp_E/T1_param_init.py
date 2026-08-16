@@ -7,12 +7,12 @@ from pennylane import numpy as np
 from functools import partial
 from pathlib import Path
 
-import src.qaoa_run as qr
-import src.circuit.ansatz as ans
-import src.auxiliary.classical as clas
-import src.auxiliary.graphs as gph
+import qaoa_run as qr
+import circuit.ansatz as ans
+import utils.classical as clas
+import utils.graphs as gph
 
-from src.optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
+from optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
 
 def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
