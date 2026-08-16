@@ -7,13 +7,15 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --ntasks=1
 #SBATCH --time=10:00:00             # Time limit
-#SBATCH --output=outputs/%x_%j.out  # Output file
-#SBATCH --error=outputs/%x_%j.err   # Error file
+#SBATCH --output=data/outputs/%x_%j.out  # Output file
+#SBATCH --error=data/outputs/%x_%j.err   # Error file
 ################################################################################################
+
+set -euo pipefail
 
 module purge
 module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
 cd /home/arauch/qaoa-mis/
 
-python -m scripts.data_analysis.speed_experiment
+python "$(pwd)/scripts/analysis/exp_0/speed_experiment.py"
