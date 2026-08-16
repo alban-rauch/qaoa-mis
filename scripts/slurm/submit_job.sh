@@ -15,7 +15,6 @@ set -euo pipefail
 
 module purge
 module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
-export PYTHONPATH=/home/arauch/qaoa-mis/src:$PYTHONPATH
 
 cd /home/arauch/qaoa-mis/
 
