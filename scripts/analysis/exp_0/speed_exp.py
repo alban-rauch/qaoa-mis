@@ -1,11 +1,13 @@
+"""
+Initial speed experiment
+"""
+
 import numpy as np
 import time
 from pathlib import Path
 
-
 import src.auxiliary.graphs as gph
 import src.qaoa_run as qr
-import scripts.data_analysis.T1_param_init as tst
 
 
 N = 12
@@ -85,11 +87,12 @@ for N_idx, N in enumerate(N_values):
         aratio_mean[N_idx, p_idx] = (np.mean(aratio_samples))
         aratio_stderr[N_idx, p_idx] = (np.std(aratio_samples, ddof=1) / np.sqrt(num_samples))
 
-foldername = Path("plots/speed_test")
-filename = foldername / f'speed_data.npz'
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+DATA_DIR = PROJECT_ROOT / "data/analysis_data"
+outfile = DATA_DIR / "exp_0/speed_data.npz"
 
 np.savez(
-    filename, 
+    outfile, 
     N_values=N_values,
     p_values=p_values,
     speed_mean=speed_mean, 

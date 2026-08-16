@@ -2,9 +2,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-script_dir = Path(__file__).parent
-data_path = script_dir / Path("speed_data.npz")
-data = np.load(data_path)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+DATA_DIR = PROJECT_ROOT / "data/analysis_data"
+infile = DATA_DIR / "exp_0/speed_data.npz"
+data = np.load(infile)
 
 speed_mean = data["speed_mean"]
 speed_stderr = data["speed_stderr"]
@@ -81,7 +82,10 @@ ax3.grid(True, linestyle="--", alpha=0.6)
 ax3.legend(title="Depth", frameon=True)
 
 
+PLOT_DIR = PROJECT_ROOT / "results"
+outfile = PLOT_DIR / "qaoa_benchmark_results.png"
+
+
 plt.tight_layout()
-output_path = Path("qaoa_benchmark_results.png")
-plt.savefig(output_path, dpi=300, bbox_inches="tight")
+plt.savefig(outfile, dpi=300, bbox_inches="tight")
 plt.show()

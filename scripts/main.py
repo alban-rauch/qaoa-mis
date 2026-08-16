@@ -8,7 +8,7 @@ import numpy as np
 
 import src.auxiliary.graphs as gph
 import src.qaoa_run as qr
-import scripts.data_analysis.T1_param_init as tst
+# import scripts.analysis.T1_param_init as tst
 
 
 # ================================================================ #

@@ -14,6 +14,6 @@
 module purge
 module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
-cd /home/arauch/qaoa-mis/penn_cluster
+cd /home/arauch/qaoa-mis/
 
-python data_analysis/speed_experiment.py
+python -m scripts.data_analysis.speed_experiment
