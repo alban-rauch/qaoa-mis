@@ -3,13 +3,13 @@ Initial speed experiment
 """
 
 import numpy as np
-import time
-from pathlib import Path
 
 import source.utils.graphs as gph
 import source.qaoa_run as qr
 from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
+
+#### Fixed variables ####
 
 problem_config = {
     "N": None,
@@ -35,53 +35,67 @@ apparatus_config = {
 }
 
 
+
+#### (N, p, samples) considered ####
+
 N_values = np.array(list(range(5, 10)))
+N_size = len(N_values)
 p_values = np.array(list(range(1, 5)))
+p_size = len(p_values)
 num_samples = 10
 
-speed_mean = np.zeros((len(N_values), len(p_values)))
-speed_stderr = np.zeros((len(N_values), len(p_values)))
 
-evals_mean = np.zeros((len(N_values), len(p_values)))
-evals_stderr = np.zeros((len(N_values), len(p_values)))
 
-aratio_mean = np.zeros((len(N_values), len(p_values)))
-aratio_stderr = np.zeros((len(N_values), len(p_values)))
+#### Random graphs prep ####
 
-random_graphs = 
+random_graphs = np.zeros((N_size, p_size, num_samples))
+for N_idx, N in enumerate(N_values):
+    for p_idx, p in enumerate(p_values):
+        for i in range(num_samples):
+            random_graphs[N_idx, p_idx, i] = gph.randomGilbert(N, 0.25)
+
+
+#### Run ####
+
+times_mean = np.zeros((N_size, p_size))
+times_stderr = np.zeros((N_size, p_size))
+
+evals_mean = np.zeros((N_size, p_size))
+evals_stderr = np.zeros((N_size, p_size))
+
+aratio_mean = np.zeros((N_size, p_size))
+aratio_stderr = np.zeros((N_size, p_size))
 
 
 for N_idx, N in enumerate(N_values):
     for p_idx, p in enumerate(p_values):
-        speed_samples = np.zeros(num_samples)
+        times_samples = np.zeros(num_samples)
         aratio_samples = np.zeros(num_samples)
         evals_samples = np.zeros(num_samples)
 
         for i in range(num_samples):
             problem_config["N"] = N
             apparatus_config["p"] = p
-            problem_config["graph"] = gph.randomGilbert(N, 0.25)
-            start_time = time.perf_counter()
+            problem_config["graph"] = random_graphs[N_idx, p_idx, i]
             one_qaoa_run = qr.run_qaoa(
                     problem=problem_config,
                     strategy=strategy_config,
                     apparatus=apparatus_config,
                     silence=True
                 )
-            end_time = time.perf_counter()
 
-            speed = end_time - start_time
+            times = one_qaoa_run["times"]
             evals = one_qaoa_run["cost_circuit_evals"]
             aratio = one_qaoa_run["approximation_ratio"]
 
             evals_samples[i] = evals
-            speed_samples[i] = speed
+            times_samples[i] = times 
             aratio_samples[i] = aratio
 
         print((N, p), "done")
 
-        speed_mean[N_idx, p_idx] = (np.mean(speed_samples))
-        speed_stderr[N_idx, p_idx] = (np.std(speed_samples, ddof=1) / np.sqrt(num_samples))
+        times_mean[N_idx, p_idx] = (np.mean(times_samples))
+        times_stderr[N_idx, p_idx] = (np.std(times_samples, ddof=1) / np.sqrt(num_samples))
         evals_mean[N_idx, p_idx] = (np.mean(evals_samples))
         evals_stderr[N_idx, p_idx] = (np.std(evals_samples, ddof=1) / np.sqrt(num_samples))
         aratio_mean[N_idx, p_idx] = (np.mean(aratio_samples))
@@ -94,8 +108,9 @@ np.savez(
     outfile, 
     N_values=N_values,
     p_values=p_values,
-    speed_mean=speed_mean, 
-    speed_stderr=speed_stderr, 
+    graphs=random_graphs,
+    times_mean=times_mean, 
+    times_stderr=times_stderr, 
     evals_mean=evals_mean, 
     evals_stderr=evals_stderr, 
     aratio_mean=aratio_mean,

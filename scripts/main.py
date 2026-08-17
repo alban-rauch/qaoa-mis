@@ -41,6 +41,19 @@ apparatus_config = {
     "opt_steps": 1000,
 }
 
+
+one_qaoa_run = qr.run_qaoa(
+        problem=problem_config,
+        strategy=strategy_config,
+        apparatus=apparatus_config,
+        silence=True
+    )
+
+print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
+print("Times:", one_qaoa_run["times"])
+
+apparatus_config["device"] = "lightning.amdgpu"
+
 one_qaoa_run = qr.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
