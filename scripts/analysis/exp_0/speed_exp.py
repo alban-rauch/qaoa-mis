@@ -91,7 +91,7 @@ for N_idx, N in enumerate(N_values):
             times_samples[i] = times 
             aratio_samples[i] = aratio
 
-        print((N, p), "done")
+        print((float(N), float(p)), "done")
 
         times_mean[N_idx, p_idx] = (np.mean(times_samples))
         times_stderr[N_idx, p_idx] = (np.std(times_samples, ddof=1) / np.sqrt(num_samples))
