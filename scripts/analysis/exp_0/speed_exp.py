@@ -48,11 +48,10 @@ num_samples = 10
 
 #### Random graphs prep ####
 
-random_graphs = np.zeros((N_size, p_size, num_samples))
+random_graphs = np.empty((N_size, num_samples), dtype=object)
 for N_idx, N in enumerate(N_values):
-    for p_idx, p in enumerate(p_values):
-        for i in range(num_samples):
-            random_graphs[N_idx, p_idx, i] = gph.randomGilbert(N, 0.25)
+    for i in range(num_samples):
+        random_graphs[N_idx, i] = gph.randomGilbert(N, 0.25)
 
 
 #### Run ####
@@ -76,7 +75,7 @@ for N_idx, N in enumerate(N_values):
         for i in range(num_samples):
             problem_config["N"] = N
             apparatus_config["p"] = p
-            problem_config["graph"] = random_graphs[N_idx, p_idx, i]
+            problem_config["graph"] = random_graphs[N_idx, i]
             one_qaoa_run = qr.run_qaoa(
                     problem=problem_config,
                     strategy=strategy_config,
@@ -84,7 +83,7 @@ for N_idx, N in enumerate(N_values):
                     silence=True
                 )
 
-            times = one_qaoa_run["times"]
+            times = sum(one_qaoa_run["times"])
             evals = one_qaoa_run["cost_circuit_evals"]
             aratio = one_qaoa_run["approximation_ratio"]
 
