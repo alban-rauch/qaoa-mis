@@ -70,6 +70,7 @@ module load pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
 
 export PYTHONUNBUFFERED=1
 export PYTHONPATH=/home/arauch/qaoa-mis:${PYTHONPATH:-}
+# $env:PYTHONPATH = "C:\Users\Alban Rauch\Documents\Alban\Polytechnique\STAGE 2 - Quantum Computing\qaoa-mis;$env:PYTHONPATH"
 
 cd /home/arauch/qaoa-mis/
 

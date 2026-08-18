@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 
-infile = DATA_DIR / "exp_0/speed_data.npz"
-outfile = RESULTS_DIR / "exp_0/qaoa_benchmark_results.png"
+infile = DATA_DIR / "analysis_data/exp_0/speed_data3.npz"
+outfile = RESULTS_DIR / "exp_0/qaoa_benchmark_results3.png"
 
 
 data = np.load(infile)
 
-speed_mean = data["speed_mean"]
-speed_stderr = data["speed_stderr"]
+times_mean = data["times_mean"]
+times_stderr = data["times_stderr"]
 evals_mean = data["evals_mean"]
 evals_stderr = data["evals_stderr"]
 aratio_mean = data["aratio_mean"]
@@ -19,7 +19,7 @@ aratio_stderr = data["aratio_stderr"]
 N_values = data["N_values"]
 p_values = data["p_values"]
 
-speed_stderr = np.nan_to_num(speed_stderr, nan=0.0)
+speed_stderr = np.nan_to_num(times_stderr, nan=0.0)
 evals_stderr = np.nan_to_num(evals_stderr, nan=0.0)
 aratio_stderr = np.nan_to_num(aratio_stderr, nan=0.0)
 
@@ -29,7 +29,7 @@ fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5), sharex=True)
 for p_idx, p in enumerate(p_values):
     ax1.errorbar(
         N_values,
-        speed_mean[:, p_idx],
+        times_mean[:, p_idx],
         yerr=speed_stderr[:, p_idx],
         fmt="-o",
         capsize=4,

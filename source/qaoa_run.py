@@ -88,7 +88,7 @@ def extract_solutions(graph, wires, probs, theo_best_config, silence):
     most_likely_bitstring = clas.list_to_string(most_likely_bin)
 
     if not silence:
-        print("Optimal:", most_likely_bin)
+        print("Optimal:", most_likely_bitstring)
         # plot.draw_select(graph, most_likely_bin)
 
     success = most_likely_bitstring in theo_best_config
