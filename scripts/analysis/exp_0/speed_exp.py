@@ -4,7 +4,7 @@ Initial speed experiment
 
 import numpy as np
 
-import source.utils.graphs as gph
+import source.utils.graph_gen as gph
 import source.qaoa_run as qr
 from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR
 

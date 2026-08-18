@@ -10,7 +10,7 @@ from pathlib import Path
 import source.qaoa_run as qr
 import source.circuit.ansatz as ans
 import source.utils.classical as clas
-import source.utils.graphs as gph
+import source.utils.graph_gen as gph
 
 from source.optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
 

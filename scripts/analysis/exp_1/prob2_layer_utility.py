@@ -1,5 +1,5 @@
 import numpy as np
-import source.utils.graphs as gph
+import source.utils.graph_gen as gph
 from source.qaoa_run import run_qaoa
 
 

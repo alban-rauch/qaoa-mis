@@ -4,7 +4,7 @@ classical.py
 Classical resolution.
 """
 
-from .graphs import is_legal
+from .graph_gen import is_legal
 
 def list_to_string(lst):
     binary = ''

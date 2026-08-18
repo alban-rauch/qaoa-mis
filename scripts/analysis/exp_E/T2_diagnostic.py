@@ -3,7 +3,7 @@ import pennylane as qml
 from pennylane import numpy as np
 from matplotlib import pyplot as plt
 
-import source.utils.graphs as gph
+import source.utils.graph_gen as gph
 import source.circuit.warm_start as ws
 import source.circuit.ansatz as qa
 import source.qaoa_run as qr

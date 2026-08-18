@@ -6,7 +6,7 @@ Main file.
 
 import numpy as np
 
-import source.utils.graphs as gph
+import source.utils.graph_gen as gph
 import source.qaoa_run as qr
 # import scripts.analysis.T1_param_init as tst
 
