@@ -7,6 +7,8 @@ Graph generation.
 import numpy as np
 import networkx as nx
 
+from source.paths import GRAPHS_DIR
+
 
 ####################################################################################
 ###                               Useful functions                               ###
@@ -23,6 +25,10 @@ def edges_to_adjmat(edges, N, dtype=np.int8):
     adjmat[edges[:, 0], edges[:, 1]] = 1
     adjmat[edges[:, 1], edges[:, 0]] = 1
     return adjmat
+
+def get_graph_from_edges(edges):
+    # Assumes edges is np.array of dim (E, 2)
+    return nx.Graph(edges)
 
 
 ####################################################################################
@@ -76,6 +82,12 @@ def randomGilbert(N, q):
 
 
 ### Complete, linear, circular ###
+
+determ_graphs = {
+    'complete': complete_graph,
+    'linear': linear_graph,
+    'circular': circular_graph,
+}
 
 def gen_determ(fn, N_range):
     return {
@@ -190,21 +202,11 @@ def load_Gilbert(path):
 
 ### General ###
 
-instructions = {
-    'complete': range(3, 201),                            # N
-    'linear': range(3, 201),                              # N
-    'circular': range(3, 201),                            # N
-    'complete_bipartite': (range(3, 101), range(3, 101)),                # (a, b)
-    'DRegular': (range(3, 101), [2, 3, 5, 10, 50], 100),      # (num_sample, N, d)
-    'Gilbert': (range(3, 101), np.linspace(0, 1, 21), 100),  # (num_sample, N, q)
-}
-
-
-def gen_samples(instructions, folder):
+def gen_save_samples(instructions, folder):
     for family, info in instructions.items():
         path = folder / f'{family}.npz'
         if family in ['complete', 'linear', 'circular']:
-            data_dict = gen_determ(f'{family}_graph', info)
+            data_dict = gen_determ(determ_graphs[family], info)
             save_determ(data_dict, path)
         elif family == 'complete_bipartite':
             data_dict = gen_bip(*info)
@@ -218,9 +220,9 @@ def gen_samples(instructions, folder):
 
 
 def load_family(path, family):
-    if family == 'DReg' or family == 'bip':
+    if family == 'DRegular' or family == 'complete_bipartite':
         data_dict = load_double(path)
-    elif family == 'Gilb':
+    elif family == 'Gilbert':
         data_dict = load_Gilbert(path)
     else:
         data_dict = load_determ(path)
@@ -230,9 +232,26 @@ def load_family(path, family):
 def get_sample(data_dict, param, s=None):
     entry = data_dict[param]
     gtype = data_dict['type']
-    if gtype == 'Gilb':
+    if gtype == 'Gilbert':
         return get_Gilbert(entry, s)
-    elif gtype == 'DReg':
+    elif gtype == 'DRegular':
         return entry[s]
     else:
         return entry
+
+    
+
+####################################################################################
+###                                  Generation                                  ###
+####################################################################################
+
+if __name__ == "__main__":
+    instructions = {
+        'complete': range(3, 201),                              # N
+        'linear': range(3, 201),                                # N
+        'circular': range(3, 201),                              # N
+        'complete_bipartite': (range(3, 101), range(3, 101)),   # (a, b)
+        'DRegular': (range(3, 101), [2, 3, 5, 10, 50], 100),    # (num_sample, N, d)
+        'Gilbert': (range(3, 101), np.linspace(0, 1, 21), 100), # (num_sample, N, q)
+    }
+    gen_save_samples(instructions, GRAPHS_DIR)

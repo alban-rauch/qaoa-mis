@@ -11,3 +11,4 @@ PROJECT_ROOT = _find_project_root()
 DATA_DIR = PROJECT_ROOT / "data"
 RESULTS_DIR = PROJECT_ROOT / "results"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
+GRAPHS_DIR = DATA_DIR / "graphs"
