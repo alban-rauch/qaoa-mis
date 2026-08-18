@@ -1,0 +1,187 @@
+Loading pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
+  Loading requirement: gcc/13.3.0 Rocm/7.1.1 python/3.11.13
+Layer 1 optimization...
+Eval  10 | Energy: -17.911067
+Layer 2 optimization...
+Eval  10 | Energy: -16.396607
+Eval  20 | Energy: -20.604435
+Eval  30 | Energy: -21.356319
+Layer 3 optimization...
+Eval  10 | Energy: -7.077738
+Eval  20 | Energy: -18.612129
+Eval  30 | Energy: -20.290676
+Eval  40 | Energy: -20.774959
+Eval  50 | Energy: -21.636271
+Layer 4 optimization...
+Eval  10 | Energy: -20.184082
+Eval  20 | Energy: -21.522912
+Eval  30 | Energy: -22.189199
+Eval  40 | Energy: -22.399239
+Eval  50 | Energy: -22.412736
+Layer 5 optimization...
+Eval  10 | Energy: -0.711673
+Eval  20 | Energy: -1.515071
+Eval  30 | Energy: -0.096184
+Eval  40 | Energy: -15.065992
+Eval  50 | Energy: -15.554405
+Eval  60 | Energy: -15.690757
+Eval  70 | Energy: -15.717760
+Layer 6 optimization...
+Eval  10 | Energy: -11.812684
+Eval  20 | Energy: -16.246980
+Eval  30 | Energy: -17.544211
+Eval  40 | Energy: -19.120915
+Eval  50 | Energy: -19.327844
+Eval  60 | Energy: -19.376966
+Eval  70 | Energy: -19.377016
+Layer 7 optimization...
+Eval  10 | Energy: -12.706193
+Eval  20 | Energy: -15.901270
+Eval  30 | Energy: -17.955069
+Eval  40 | Energy: -18.111162
+Eval  50 | Energy: -18.122824
+Eval  60 | Energy: -18.125502
+Eval  70 | Energy: -18.125513
+Layer 8 optimization...
+Eval  10 | Energy: -15.968141
+Eval  20 | Energy: -19.154359
+Eval  30 | Energy: -19.684273
+Eval  40 | Energy: -19.694626
+Eval  50 | Energy: -19.519293
+Eval  60 | Energy: -19.876199
+Eval  70 | Energy: -20.733288
+Eval  80 | Energy: -20.946149
+Eval  90 | Energy: -20.949175
+Eval 100 | Energy: -20.949224
+Eval 110 | Energy: -20.951189
+Eval 120 | Energy: -20.957168
+Eval 130 | Energy: -20.993297
+Eval 140 | Energy: -21.011556
+Eval 150 | Energy: -21.015550
+Eval 160 | Energy: -21.015790
+Layer 9 optimization...
+Eval  10 | Energy: 1.419966
+Eval  20 | Energy: -7.281769
+Eval  30 | Energy: -18.759766
+Eval  40 | Energy: -21.767100
+Eval  50 | Energy: -22.860828
+Eval  60 | Energy: -23.200169
+Eval  70 | Energy: -23.366261
+Eval  80 | Energy: -23.759342
+Eval  90 | Energy: -24.428815
+Eval 100 | Energy: -24.818073
+Eval 110 | Energy: -25.211147
+Eval 120 | Energy: -25.732443
+Eval 130 | Energy: -25.987795
+Eval 140 | Energy: -26.016467
+Eval 150 | Energy: -26.017564
+Eval 160 | Energy: -26.017921
+Eval 170 | Energy: -26.017955
+Eval 180 | Energy: -26.017964
+Layer 10 optimization...
+Eval  10 | Energy: -21.114798
+Eval  20 | Energy: -25.207993
+Eval  30 | Energy: -25.714179
+Eval  40 | Energy: -25.696828
+Eval  50 | Energy: -26.291940
+Eval  60 | Energy: -26.509963
+Eval  70 | Energy: -26.530598
+Eval  80 | Energy: -26.538668
+Eval  90 | Energy: -26.543903
+Eval 100 | Energy: -26.545274
+Eval 110 | Energy: -26.550261
+Eval 120 | Energy: -26.648327
+Eval 130 | Energy: -26.957395
+Eval 140 | Energy: -26.981501
+Eval 150 | Energy: -26.992051
+Eval 160 | Energy: -26.997862
+Eval 170 | Energy: -27.011291
+Eval 180 | Energy: -27.021464
+Eval 190 | Energy: -27.023325
+Eval 200 | Energy: -27.028085
+Eval 210 | Energy: -27.029151
+Eval 220 | Energy: -27.030008
+Eval 230 | Energy: -27.030106
+Eval 240 | Energy: -27.030121
+Eval 250 | Energy: -27.030127
+Optimal Parameters: [[ 2.13547068  2.10058089  4.00255684  3.32567083  2.93630109  1.60882009
+   1.37156886  0.06445257  1.76893256  1.46283775]
+ [ 2.65945374  0.67749644  1.39365268 -0.23329932 -0.05045756  0.11226622
+   1.64188462  1.33803939  1.71533813  1.56322919]]
+Optimal: [np.int64(0), np.int64(1), np.int64(0), np.int64(0), np.int64(1), np.int64(0), np.int64(0), np.int64(1), np.int64(0), np.int64(0), np.int64(0), np.int64(0), np.int64(0), np.int64(0), np.int64(1), np.int64(1), np.int64(1), np.int64(0), np.int64(1), np.int64(1)]
+Circuit evals: 1960
+Times: (0.35436619259417057, 382.40436681732535, 0.11794195370748639)
+Layer 1 optimization...
+Eval  10 | Energy: -17.911067
+Layer 2 optimization...
+Eval  10 | Energy: -16.396607
+Eval  20 | Energy: -20.604435
+Eval  30 | Energy: -21.356319
+Layer 3 optimization...
+Eval  10 | Energy: -7.077738
+Eval  20 | Energy: -18.612129
+Eval  30 | Energy: -20.290676
+Eval  40 | Energy: -20.774959
+Eval  50 | Energy: -21.636271
+Layer 4 optimization...
+Eval  10 | Energy: -20.184082
+Eval  20 | Energy: -21.522919
+Eval  30 | Energy: -22.189205
+Eval  40 | Energy: -22.399240
+Eval  50 | Energy: -22.412736
+Layer 5 optimization...
+Eval  10 | Energy: -0.711666
+Eval  20 | Energy: -1.497205
+Eval  30 | Energy: -2.472641
+Eval  40 | Energy: -14.046480
+Eval  50 | Energy: -14.903052
+Eval  60 | Energy: -15.441968
+Eval  70 | Energy: -15.712670
+Eval  80 | Energy: -15.717759
+Layer 6 optimization...
+Eval  10 | Energy: -3.637794
+Eval  20 | Energy: -15.387435
+Eval  30 | Energy: -19.331578
+Eval  40 | Energy: -19.376992
+Layer 7 optimization...
+Eval  10 | Energy: -12.707290
+Eval  20 | Energy: -15.708566
+Eval  30 | Energy: -17.952004
+Eval  40 | Energy: -18.120062
+Eval  50 | Energy: -18.122841
+Eval  60 | Energy: -18.125370
+Layer 8 optimization...
+Eval  10 | Energy: -15.968761
+Eval  20 | Energy: -19.167361
+Eval  30 | Energy: -19.683663
+Eval  40 | Energy: -19.693901
+Eval  50 | Energy: -19.729573
+Eval  60 | Energy: -19.823045
+Eval  70 | Energy: -20.336233
+Eval  80 | Energy: -20.899072
+Eval  90 | Energy: -20.949365
+Eval 100 | Energy: -20.949386
+Eval 110 | Energy: -20.949986
+Eval 120 | Energy: -20.961687
+Eval 130 | Energy: -21.018939
+Eval 140 | Energy: -21.067073
+Eval 150 | Energy: -21.068339
+Layer 9 optimization...
+Eval  10 | Energy: -1.552428
+Eval  20 | Energy: -6.492741
+Eval  30 | Energy: -2.994349
+Eval  40 | Energy: -18.440861
+Eval  50 | Energy: -19.951216
+Eval  60 | Energy: -20.991897
+Eval  70 | Energy: -21.898698
+Eval  80 | Energy: -21.991793
+Eval  90 | Energy: -22.026841
+Eval 100 | Energy: -22.028971
+Eval 110 | Energy: -22.029723
+Eval 120 | Energy: -22.051234
+Eval 130 | Energy: -22.079711
+Eval 140 | Energy: -22.081135
+Eval 150 | Energy: -22.081169
+Eval 160 | Energy: -22.081178
+Eval 170 | Energy: -22.081243
+Eval 180 | Energy: -20.113040

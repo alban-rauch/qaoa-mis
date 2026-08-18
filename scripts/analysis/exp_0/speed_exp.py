@@ -21,13 +21,13 @@ strategy_config = {
     "relaxation_type": 'continuous',    #  None | 'continuous'
     "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
     "fourier_qR": (None, 5),
-    "init_param": [0.55, 0.27],
+    "init_param": [0.67, 0.33],
     "mixers": ["x"],
 }
 
 apparatus_config = {
     "p": None,
-    "device": "lightning.qubit",        # "lightning.qubit" | "lightning.amdgpu" 
+    "device": "lightning.amdgpu",        # "lightning.qubit" | "lightning.amdgpu" 
     "estimator_shots": 10000,
     "sampler_shots": 10000,
     "optimizer": "L-BFGS-B",            # "L-BFGS-B" | "Adam"
@@ -38,9 +38,9 @@ apparatus_config = {
 
 #### (N, p, samples) considered ####
 
-N_values = np.array(list(range(5, 10)))
+N_values = np.array(list(range(5, 16)))
 N_size = len(N_values)
-p_values = np.array(list(range(1, 5)))
+p_values = np.array(list(range(1, 11)))
 p_size = len(p_values)
 num_samples = 10
 
@@ -101,7 +101,7 @@ for N_idx, N in enumerate(N_values):
         aratio_stderr[N_idx, p_idx] = (np.std(aratio_samples, ddof=1) / np.sqrt(num_samples))
 
 
-outfile = DATA_DIR / "analysis_data/exp_0/speed_data2.npz"
+outfile = DATA_DIR / "analysis_data/exp_0/speed_data3.npz"
 
 np.savez(
     outfile, 
