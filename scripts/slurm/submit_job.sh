@@ -6,7 +6,7 @@
 #SBATCH --exclusive                 # Resource not shared with other users
 #SBATCH --cpus-per-task=8
 #SBATCH --ntasks=1
-#SBATCH --time=10:00:00             # Time limit
+#SBATCH --time=15:00:00             # Time limit
 #SBATCH --output=data/outputs/%x_%j.out  # Output file
 #SBATCH --error=data/outputs/%x_%j.err   # Error file
 ################################################################################################
@@ -22,3 +22,4 @@ export PYTHONPATH=/home/arauch/qaoa-mis:${PYTHONPATH:-}
 cd /home/arauch/qaoa-mis/
 
 python "scripts/analysis/exp_0/speed_exp.py"
+# python scripts/main.py

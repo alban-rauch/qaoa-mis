@@ -15,8 +15,8 @@ import source.qaoa_run as qr
 #                             QAOA RUN                             #
 # ================================================================ #
 
-N = 12
-p = 5
+N = 20
+p = 10
 
 problem_config = {
     "N": N,
@@ -41,24 +41,25 @@ apparatus_config = {
     "opt_steps": 1000,
 }
 
-
-one_qaoa_run = qr.run_qaoa(
-        problem=problem_config,
-        strategy=strategy_config,
-        apparatus=apparatus_config,
-        silence=True
-    )
-
-print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
-print("Times:", one_qaoa_run["times"])
-
 apparatus_config["device"] = "lightning.amdgpu"
 
 one_qaoa_run = qr.run_qaoa(
         problem=problem_config,
         strategy=strategy_config,
         apparatus=apparatus_config,
-        silence=True
+        silence=False
+    )
+
+print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
+print("Times:", one_qaoa_run["times"])
+
+apparatus_config["device"] = "lightning.qubit"
+
+one_qaoa_run = qr.run_qaoa(
+        problem=problem_config,
+        strategy=strategy_config,
+        apparatus=apparatus_config,
+        silence=False
     )
 
 print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])

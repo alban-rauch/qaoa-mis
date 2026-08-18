@@ -1,0 +1,4 @@
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_0/speed_exp.py", line 51
+    random_graphs = 
+                    ^
+SyntaxError: invalid syntax
