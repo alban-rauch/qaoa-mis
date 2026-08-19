@@ -1,3 +1,9 @@
+"""
+paths.py
+=========
+Registry to access useful paths in the repository.
+"""
+
 from pathlib import Path
 
 def _find_project_root(marker="pyproject.toml"):

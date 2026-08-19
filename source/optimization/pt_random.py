@@ -1,5 +1,5 @@
 """
-optimization/pt_random.py
+pt_random.py
 ===============
 "RANDOM" parameter restart framework.
 """

@@ -1,11 +1,12 @@
 """
-graphs.py
+graphs_gen.py
 =========
 Graph generation.
 """
 
 import numpy as np
 import networkx as nx
+import multiprocessing as mp
 
 from source.paths import GRAPHS_DIR
 
@@ -40,14 +41,32 @@ def get_graph_from_edges(edges):
 def complete_graph(N):
     return nx.complete_graph(N)
 
+def complete_edges(N):
+    iu = np.triu_indices(N, k=1)
+    return np.stack(iu, axis=1)
+
 def linear_graph(N):
     return nx.path_graph(N)
+
+def linear_edges(N):
+    return np.array(
+        [(i, i+1) for i in range(N-1)]
+    )
 
 def circular_graph(N):
     return nx.circulant_graph(N, [1])
 
+def circular_edges(N):
+    return np.array(
+        [(i, i+1) for i in range(N-1)] + [(N-1, 0)]
+    )
+
 def complete_bipartite_graph(a, b):
     return nx.complete_bipartite_graph(a, b)
+
+def complete_bipartite_edges(a, b):
+    ii, jj = np.meshgrid(np.arange(a), np.arange(a, a + b), indexing='ij')
+    return np.stack([ii.ravel(), jj.ravel()], axis=1)
 
 def simple():
     edges = [(0, 1), (1,2)]
@@ -84,14 +103,14 @@ def randomGilbert(N, q):
 ### Complete, linear, circular ###
 
 determ_graphs = {
-    'complete': complete_graph,
-    'linear': linear_graph,
-    'circular': circular_graph,
+    'complete': complete_edges,
+    'linear': linear_edges,
+    'circular': circular_edges,
 }
 
 def gen_determ(fn, N_range):
     return {
-        N: np.array(fn(N).edges(), dtype=np.int32) 
+        N: np.array(fn(N), dtype=np.int32) 
                 for N in N_range
     }
 
@@ -111,15 +130,24 @@ def load_determ(path):
     return out
 
 
-### Complete bipartite and Random D-Regular ###
+### Complete bipartite ###
 
 def gen_bip(a_range, b_range):
     return {
-        (a, b): np.array(nx.complete_bipartite_graph(a, b).edges(), dtype=np.int32) 
+        (a, b): np.array(complete_bipartite_edges(a, b), dtype=np.int32) 
                 for a in a_range for b in b_range if a <= b
     }
 
-def gen_DRegular(N_range, d_values, num_sample=100):
+### Random D-Regular (multi-processing) ###
+
+def _regular_sample(args):
+    N, d, seed = args
+    return np.array(nx.random_regular_graph(d, N, seed=seed).edges(), dtype=np.int32)
+
+
+def gen_DRegular_singleprocess(N_range, d_values, num_sample=100):
+    # Storage for gen_DReg uses the fact that for a graph DReg(N, d), the number 
+    # of edges is E = N * d / 2, so we can use an array of dimension (num_sample, E, 2)
     out = {}
     for d in d_values:
         for N in N_range:
@@ -132,8 +160,44 @@ def gen_DRegular(N_range, d_values, num_sample=100):
             out[(N, d)] = arr
     return out
 
-    # Storage for gen_DReg uses the fact that for a graph DReg(N, d), the number 
-    # of edges is E = N * d / 2, so we can use an array of dimension (num_sample, E, 2)
+
+def gen_DRegular_multiprocess(N_range, d_values, num_sample=100, n_workers=None):
+    # More efficient than other version by dividing the work. The total number of jobs, 
+    # i.e. tuples (N, d, s) is split between workers (in my case 6 workers) and I further
+    # divided the patches by 4 since the jobs are highly uneven (eg (N=3, d=2) vs (N=100, d=50)).
+
+    valid_params = [
+        (N, d) for d in d_values for N in N_range
+        if N > d and (N * d) % 2 == 0
+    ]
+
+    jobs = [(N, d, s) for (N, d) in valid_params for s in range(num_sample)]
+    if not jobs:
+        return {}
+ 
+    n_workers = n_workers or mp.cpu_count()
+    if n_workers > 1:
+        with mp.Pool(n_workers) as pool:
+            results = pool.map(
+                _regular_sample, 
+                jobs, 
+                chunksize=max(1, len(jobs) // (n_workers * 4))
+            )
+    else:
+        results = [_regular_sample(j) for j in jobs]
+ 
+    out = {}
+    idx = 0
+    for (N, d) in valid_params:
+        E = N * d // 2
+        arr = np.empty((num_sample, E, 2), dtype=np.int32)
+        for s in range(num_sample):
+            arr[s] = results[idx]
+            idx += 1
+        out[(N, d)] = arr
+
+    return out
+
 
 def save_double(data_dict, path):
     flat = {
@@ -152,9 +216,11 @@ def load_double(path):
     return out
 
 
-### Random Gilbert ###
+### Random Gilbert (vectorized) ###
 
-def gen_Gilbert(N_range, q_values, num_sample=100):
+def gen_Gilbert_unvect(N_range, q_values, num_sample=100):
+    # Storage for gen_Gilb is done in a long array "N_q_edges" of dim (TotE, 2)
+    # Distinction between graphs is done thanks to "N_q_lengths" array
     out = {}
     for q in q_values:
         for N in N_range:
@@ -170,15 +236,33 @@ def gen_Gilbert(N_range, q_values, num_sample=100):
             }
     return out
 
-    # Storage for gen_Gilb is done in a long array "N_q_edges" of dim (TotE, 2)
-    # Distinction between graphs is done thanks to "N_q_lengths" array
+def gen_Gilbert_vect(N_range, q_values, num_sample=100, seed=0):
+    # The same seed is reused throughout. Given a size N, the possible 
+    #   edges and num_sample do not vary, hence ii, jj remain fixed.
+    # For every q, a mask of size (num_sample, num_possible_edges) determines, 
+    #   at pos [s, e] if edge e in sample s exists.
+    rng = np.random.default_rng(seed)
+    out = {}
+    for N in N_range:
+        iu = np.triu_indices(N, k=1)  # [(i, j) | i < j] in the form [[0, 0, ..., N-1], [1, 2, ..., N]]
+        num_possible_edges = len(iu[0])     # N*(N-1)/2 possible edges
+        ii = np.broadcast_to(iu[0], (num_sample, num_possible_edges))
+        jj = np.broadcast_to(iu[1], (num_sample, num_possible_edges))
+        for q in q_values:
+            mask = rng.random((num_sample, num_possible_edges)) < q    
+            lengths = mask.sum(axis=1).astype(np.int32)
+            all_i = ii[mask]
+            all_j = jj[mask]
+            edges = np.stack([all_i, all_j], axis=1).astype(np.int32)
+            out[(N, q)] = {'edges': edges, 'lengths': lengths}
+    return out
 
 
 def get_Gilbert(entry, s):
     starts = np.concatenate([[0], np.cumsum(entry['lengths'])])
     return entry['edges'][starts[s]:starts[s+1]]
 
-def save_Gilb(data_dict, path):
+def save_Gilbert(data_dict, path):
     flat = {}
     for (N, p), entry in data_dict.items():
         flat[f"{N}_{p}_edges"] = entry['edges']
@@ -211,12 +295,15 @@ def gen_save_samples(instructions, folder):
         elif family == 'complete_bipartite':
             data_dict = gen_bip(*info)
             save_double(data_dict, path)
+            print("determ done")
         elif family == 'DRegular':
-            data_dict = gen_DRegular(*info)
+            data_dict = gen_DRegular_multiprocess(*info)
             save_double(data_dict, path)
+            print("dreg done")
         elif family == 'Gilbert':
-            data_dict = gen_Gilbert(*info)
-            save_Gilb(data_dict, path)
+            data_dict = gen_Gilbert_vect(*info)
+            save_Gilbert(data_dict, path)
+            print("gilbert done")
 
 
 def load_family(path, family):

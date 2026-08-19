@@ -1,5 +1,5 @@
 """
-optimization/pt_given.py
+pt_given.py
 ===============
 Optimization with given parameter
 """

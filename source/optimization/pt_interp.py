@@ -1,5 +1,5 @@
 """
-optimization/pt_interp.py
+pt_interp.py
 ===============
 "INTERP" parameter transfer framework.
 """

@@ -1,5 +1,5 @@
 """
-optimization/parameter_transfer.py
+parameter_transfer.py
 ===============
 Registry to access the desired parameter transfer framework.
 """

@@ -1,5 +1,5 @@
 """
-circuit/ansatz.py
+ansatz.py
 =========
 Build the QAOA circuit.
 """

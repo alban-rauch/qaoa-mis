@@ -5,9 +5,9 @@ Important modules and libraries
 ## 📁 Structure
 
 ```text
-├── auxiliary/              # Graphs and classical
-├── circuit/                # QAOA circuit
+├── auxiliary/              # Graph generation and classical benchmark
+├── circuit/                # Core QAOA circuit
 ├── optimization/           # Classical optimizer and parameter transfers
 ├── paths.py                # Paths to specific directories
-└── qaoa_run.py             # QAOA pipeline
+└── qaoa_run.py             # Full QAOA pipeline
 ```

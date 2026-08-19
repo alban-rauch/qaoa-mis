@@ -1,5 +1,5 @@
 """
-circuit/mixers.py
+mixers.py
 =========
 Registry to access the desired mixer version.
 """

@@ -1,5 +1,5 @@
 """
-circuit/warm_start.py
+warm_start.py
 =============
 Warm starting via relaxation for improved reference state initialization.
 """

@@ -1,5 +1,5 @@
 """
-optimization/pt_fourier.py
+pt_fourier.py
 ===============
 "FOURIER" parameter transfer framework.
 """
