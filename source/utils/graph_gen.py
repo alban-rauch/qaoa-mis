@@ -110,7 +110,7 @@ determ_graphs = {
 
 def gen_determ(fn, N_range):
     return {
-        N: np.array(fn(N), dtype=np.int32) 
+        N: np.array(fn(N), dtype=np.uint8) 
                 for N in N_range
     }
 
@@ -134,7 +134,7 @@ def load_determ(path):
 
 def gen_bip(a_range, b_range):
     return {
-        (a, b): np.array(complete_bipartite_edges(a, b), dtype=np.int32) 
+        (a, b): np.array(complete_bipartite_edges(a, b), dtype=np.uint8) 
                 for a in a_range for b in b_range if a <= b
     }
 
@@ -142,7 +142,7 @@ def gen_bip(a_range, b_range):
 
 def _regular_sample(args):
     N, d, seed = args
-    return np.array(nx.random_regular_graph(d, N, seed=seed).edges(), dtype=np.int32)
+    return np.array(nx.random_regular_graph(d, N, seed=seed).edges(), dtype=np.uint8)
 
 
 def gen_DRegular_singleprocess(N_range, d_values, num_sample=100):
@@ -190,7 +190,7 @@ def gen_DRegular_multiprocess(N_range, d_values, num_sample=100, n_workers=None)
     idx = 0
     for (N, d) in valid_params:
         E = N * d // 2
-        arr = np.empty((num_sample, E, 2), dtype=np.int32)
+        arr = np.empty((num_sample, E, 2), dtype=np.uint8)
         for s in range(num_sample):
             arr[s] = results[idx]
             idx += 1
@@ -250,10 +250,10 @@ def gen_Gilbert_vect(N_range, q_values, num_sample=100, seed=0):
         jj = np.broadcast_to(iu[1], (num_sample, num_possible_edges))
         for q in q_values:
             mask = rng.random((num_sample, num_possible_edges)) < q    
-            lengths = mask.sum(axis=1).astype(np.int32)
+            lengths = mask.sum(axis=1).astype(np.uint16)
             all_i = ii[mask]
             all_j = jj[mask]
-            edges = np.stack([all_i, all_j], axis=1).astype(np.int32)
+            edges = np.stack([all_i, all_j], axis=1).astype(np.uint8)
             out[(N, q)] = {'edges': edges, 'lengths': lengths}
     return out
 
