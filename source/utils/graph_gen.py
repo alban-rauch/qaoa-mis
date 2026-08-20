@@ -1,6 +1,6 @@
 """
 graphs_gen.py
-=========
+=============
 Graph generation.
 """
 
@@ -147,7 +147,7 @@ def _regular_sample(args):
 
 def gen_DRegular_singleprocess(N_range, d_values, num_sample=100):
     # Storage for gen_DReg uses the fact that for a graph DReg(N, d), the number 
-    # of edges is E = N * d / 2, so we can use an array of dimension (num_sample, E, 2)
+    #   of edges is E = N * d / 2, so we can use an array of dimension (num_sample, E, 2)
     out = {}
     for d in d_values:
         for N in N_range:
@@ -163,8 +163,8 @@ def gen_DRegular_singleprocess(N_range, d_values, num_sample=100):
 
 def gen_DRegular_multiprocess(N_range, d_values, num_sample=100, n_workers=None):
     # More efficient than other version by dividing the work. The total number of jobs, 
-    # i.e. tuples (N, d, s) is split between workers (in my case 6 workers) and I further
-    # divided the patches by 4 since the jobs are highly uneven (eg (N=3, d=2) vs (N=100, d=50)).
+    #   i.e. tuples (N, d, s) is split between workers (in my case 6 workers) and I further
+    #   divided the patches by 4 since the jobs are highly uneven (eg (N=3, d=2) vs (N=100, d=50)).
 
     valid_params = [
         (N, d) for d in d_values for N in N_range
