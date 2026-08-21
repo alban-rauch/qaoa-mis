@@ -24,7 +24,7 @@ def save_condition(path, strategy_config, apparatus_config):
 def load_condition(path):
     path = Path(path)
     with open(path) as f:
-        data = json.safe_load(f)
+        data = json.load(f)
 
     problem_config = {"N": None, "graph": None}    
     strategy_config = data["strategy_config"]
