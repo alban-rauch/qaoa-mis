@@ -265,7 +265,7 @@ def gen_Gilbert_vect(N_range, q_values, num_sample=100, seed=0):
 
 
 def get_Gilbert(entry, s):
-    starts = np.concatenate([[0], np.cumsum(entry['lengths'])])
+    starts = np.concatenate([[0], np.cumsum(entry['lengths'], dtype=np.int64)])
     return entry['edges'][starts[s]:starts[s+1]]
 
 def save_Gilbert(data_dict, path):
