@@ -29,7 +29,9 @@ def edges_to_adjmat(edges, N, dtype=np.int8):
 
 def get_graph_from_edges(edges):
     # Assumes edges is np.array of dim (E, 2)
-    return nx.Graph(edges)
+    graph = nx.Graph()
+    graph.add_edges_from(edges)
+    return graph
 
 
 ####################################################################################
