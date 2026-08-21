@@ -1,0 +1,26 @@
+{
+  "strategy_config": {
+    "constrained": false,
+    "relaxation_type": null,
+    "param_transfer_type": "interp",
+    "fourier_qR": [
+      5,
+      10
+    ],
+    "init_param": [
+      0.67,
+      0.33
+    ],
+    "mixers": [
+      "x"
+    ]
+  },
+  "apparatus_config": {
+    "p": null,
+    "device": "lightning.amdgpu",
+    "estimator_shots": 10000,
+    "sampler_shots": 10000,
+    "optimizer": "L-BFGS-B",
+    "opt_steps": 1000
+  }
+}

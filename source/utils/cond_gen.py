@@ -6,7 +6,7 @@ apparatus_config) as YAML files under data/conditions/.
 """
 
 from pathlib import Path
-import yaml
+import json
 
 from source.paths import COND_DIR
 
@@ -18,13 +18,13 @@ def save_condition(path, strategy_config, apparatus_config):
     data["strategy_config"] = strategy_config
     data["apparatus_config"] = apparatus_config
     with open(path, "w") as f:
-        yaml.safe_dump(data, f, sort_keys=False)
+        json.dump(data, f, indent=2)
 
 
 def load_condition(path):
     path = Path(path)
     with open(path) as f:
-        data = yaml.safe_load(f)
+        data = json.safe_load(f)
 
     problem_config = {"N": None, "graph": None}    
     strategy_config = data["strategy_config"]
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     strategy_config["param_transfer_type"] = 'interp'
     strategy_config["mixers"] = ["x"]
     strategy_config["init_param"] = [0.67, 0.33]
-    path = COND_DIR / "cond1.yaml"
+    path = COND_DIR / "cond1.json"
     save_condition(path, strategy_config, apparatus_config)
 
     # cond2
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     strategy_config["param_transfer_type"] = 'interp'
     strategy_config["mixers"] = ["x"]
     strategy_config["init_param"] = [0.67, 0.33]
-    path = COND_DIR / "cond2.yaml"
+    path = COND_DIR / "cond2.json"
     save_condition(path, strategy_config, apparatus_config)
 
     # cond3
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     strategy_config["fourier_qR"] = [5, 10]
     strategy_config["mixers"] = ["x"]
     strategy_config["init_param"] = [0.67, 0.33]
-    path = COND_DIR / "cond3.yaml"
+    path = COND_DIR / "cond3.json"
     save_condition(path, strategy_config, apparatus_config)
 
     # cond4
@@ -87,5 +87,5 @@ if __name__ == "__main__":
     strategy_config["param_transfer_type"] = 'interp'
     strategy_config["mixers"] = ["x", "y"]
     strategy_config["init_param"] = [0.67, 0.33, 0.33]
-    path = COND_DIR / "cond4.yaml"
+    path = COND_DIR / "cond4.json"
     save_condition(path, strategy_config, apparatus_config)

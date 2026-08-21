@@ -4,7 +4,7 @@
 
 ```
 # For condX:
-path = COND_DIR / "condX.yaml"
+path = COND_DIR / "condX.json"
 problem_config, strategy_config, apparatus_config = source.utils.cond_gen.load_condition(path)
 ```
 

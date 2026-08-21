@@ -17,7 +17,7 @@ from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
 #### Fixed variables ####
 
 # Use cond2.yaml by default
-problem_config, strategy_config, apparatus_config = cnd.load_condition(COND_DIR / "cond2.yaml")
+problem_config, strategy_config, apparatus_config = cnd.load_condition(COND_DIR / "cond2.json")
 
 
 
