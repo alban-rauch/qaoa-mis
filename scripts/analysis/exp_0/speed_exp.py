@@ -119,7 +119,9 @@ with open(raw_path, "w", newline="") as raw_file, open(summary_path, "w", newlin
                 aratio_samples = np.zeros(num_samples)
 
                 for i in range(num_samples):
-                    problem_config["graph"] = gph.get_graph_from_edges(gph.get_sample(random_graphs[family], key, s=i))
+                    problem_config["graph"] = gph.get_graph_from_edges(
+                        gph.get_sample(random_graphs[family], key, s=i), N=N
+                    )
 
                     one_qaoa_run = qr.run_qaoa(
                         problem=problem_config,

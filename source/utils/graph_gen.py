@@ -27,10 +27,12 @@ def edges_to_adjmat(edges, N, dtype=np.int8):
     adjmat[edges[:, 1], edges[:, 0]] = 1
     return adjmat
 
-def get_graph_from_edges(edges):
+def get_graph_from_edges(edges, N=None):
     # Assumes edges is np.array of dim (E, 2)
     graph = nx.Graph()
-    graph.add_edges_from(edges)
+    if N is not None:
+        graph.add_nodes_from(range(N))
+    graph.add_edges_from((int(u), int(v)) for u, v in edges)
     return graph
 
 
