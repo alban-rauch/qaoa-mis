@@ -2,121 +2,151 @@
 Initial speed experiment
 """
 
+import csv
+import itertools
+
 import numpy as np
 
-import source.utils.graph_gen as gph
+from source.utils import graph_gen as gph
+from source.utils import cond_gen as cond
+
 import source.qaoa_run as qr
-from source.paths import PROJECT_ROOT, DATA_DIR, RESULTS_DIR, GRAPHS_DIR
+from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
 
 
 #### Fixed variables ####
 
-problem_config = {
-    "N": None,
-    "graph": None, # gph.randomDRegular(N, 3) | gph.randomGilbert(N, 0.25)
-}
-
-strategy_config = {
-    "constrained": False,
-    "relaxation_type": 'continuous',    #  None | 'continuous'
-    "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
-    "fourier_qR": (None, 5),
-    "init_param": [0.67, 0.33],
-    "mixers": ["x"],
-}
-
-apparatus_config = {
-    "p": None,
-    "device": "lightning.amdgpu",        # "lightning.qubit" | "lightning.amdgpu" 
-    "estimator_shots": 10000,
-    "sampler_shots": 10000,
-    "optimizer": "L-BFGS-B",            # "L-BFGS-B" | "Adam"
-    "opt_steps": 1000,
-}
+# Use cond2.yaml by default
+problem_config, strategy_config, apparatus_config = cond.load_condition(COND_DIR / "cond2.yaml")
 
 
 
-#### (N, p, samples) considered ####
+#### (p, samples, params) considered ####
 
 conditions = {
-    'Gilbert': (np.arange(5, 16), [0.25], 10),
+    'Gilbert': {
+        'p_values': np.arange(1, 11),
+        'num_samples': 10,
+        'axes': {'N': np.arange(5, 16), 'd': [0.25]}
+    }, 
+    # 'DRegular': {
+    #     'p_values': np.arange(1, 11),
+    #     'num_samples': 10,
+    #     'axes': {'N': np.arange(5, 16), 'd': [3]},
+    # },
+    # 'complete': {
+    #     'p_values': np.arange(1, 11),
+    #     'num_samples': 1,
+    #     'axes': {'N': np.arange(5, 16)},
+    # },
 }
 
-p_range = np.arange(1, 11)
+DETERM_FAMILIES = {'complete', 'linear', 'circular'}
+
 
 #### Random graphs prep ####
 
 random_graphs = {}
-for family in conditions:
-    random_graphs[family] = gph.load_family(GRAPHS_DIR, family)
+for family, cond in conditions.items():
+    axis_names = list(cond['axes'].keys())
+    axis_value_lists = [cond['axes'][name] for name in axis_names]
+    combos = list(itertools.product(*axis_value_lists))
+
+    if family in DETERM_FAMILIES:
+        params_needed = [combo[axis_names.index('N')] for combo in combos]
+    else:
+        params_needed = combos
+
+    random_graphs[family] = gph.load_family(
+        GRAPHS_DIR / f'{family}.npz', 
+        family, 
+        params=params_needed
+    )
+
+
+#### Output ####
+
+outdir = DATA_DIR / "analysis_data/exp_0"
+outdir.mkdir(parents=True, exist_ok=True)
+raw_path = outdir / "speed_data4_raw.csv"
+summary_path = outdir / "speed_data4_summary.csv"
+
+all_axis_names = sorted({name for cond in conditions.values() for name in cond['axes']})
+
+raw_fields = ["family"] + all_axis_names + [
+    "p", "sample_idx", 
+    "times", "evals", "aratio"
+]
+summary_fields = ["family"] + all_axis_names + [
+    "p", "sample_idx",
+    "time_mean", "time_stderr",
+    "evals_mean", "evals_stderr",
+    "aratio_mean", "aratio_stderr",
+]
 
 
 #### Run ####
 
-for family, param in conditions.items():
+with open(raw_path, "w", newline="") as raw_file, open(summary_path, "w", newline="") as summary_file:
 
-    N_values = param[0]
-    N_size = len(N_values)
-    p_values = p_range
-    p_size = len(p_values)
+    raw_writer = csv.DictWriter(raw_file, fieldnames=raw_fields, restval="")
+    summary_writer = csv.DictWriter(summary_file, fieldnames=summary_fields, restval="")
+    raw_writer.writeheader()
+    summary_writer.writeheader()
 
-    times_mean = np.zeros((N_size, p_size))
-    times_stderr = np.zeros((N_size, p_size))
+    for family, cond in conditions.items():
+        p_values = cond['p_values']
+        num_samples = cond['num_samples']
+        axis_names = list(cond['axes'].keys())
+        axis_value_lists = [cond['axes'][name] for name in axis_names]
+        combos = list(itertools.product(*axis_value_lists))
 
-    evals_mean = np.zeros((N_size, p_size))
-    evals_stderr = np.zeros((N_size, p_size))
-
-    aratio_mean = np.zeros((N_size, p_size))
-    aratio_stderr = np.zeros((N_size, p_size))
-
-
-    for N_idx, N in enumerate(N_values):
-        for p_idx, p in enumerate(p_values):
-            times_samples = np.zeros(num_samples)
-            aratio_samples = np.zeros(num_samples)
-            evals_samples = np.zeros(num_samples)
-
-            for i in range(num_samples):
+        for p in p_values:
+            apparatus_config["p"] = p
+            for combo in combos:
+                axis_dict = dict(zip(axis_names, combo))
+                key = axis_dict['N'] if family in DETERM_FAMILIES else combo
+                N = axis_dict.get('N')
                 problem_config["N"] = N
-                apparatus_config["p"] = p
-                problem_config["graph"] = random_graphs[N_idx, i]
-                one_qaoa_run = qr.run_qaoa(
+
+                times_samples = np.zeros(num_samples)
+                evals_samples = np.zeros(num_samples)
+                aratio_samples = np.zeros(num_samples)
+
+                for i in range(num_samples):
+                    problem_config["graph"] = gph.get_sample(random_graphs[family], key, s=i)
+
+                    one_qaoa_run = qr.run_qaoa(
                         problem=problem_config,
                         strategy=strategy_config,
                         apparatus=apparatus_config,
-                        silence=True
+                        silence=True,
                     )
 
-                times = sum(one_qaoa_run["times"])
-                evals = one_qaoa_run["cost_circuit_evals"]
-                aratio = one_qaoa_run["approximation_ratio"]
+                    time_val = sum(one_qaoa_run["times"])
+                    evals_val = one_qaoa_run["cost_circuit_evals"]
+                    aratio_val = one_qaoa_run["approximation_ratio"]
 
-                evals_samples[i] = evals
-                times_samples[i] = times 
-                aratio_samples[i] = aratio
+                    raw_writer.writerow({
+                        "family": family, **axis_dict, "p": p, "sample_idx": i,
+                        "time": time_val, "evals": evals_val, "aratio": aratio_val,
+                    })
 
-            print((float(N), float(p)), "done")
+                raw_file.flush()
 
-            times_mean[N_idx, p_idx] = (np.mean(times_samples))
-            times_stderr[N_idx, p_idx] = (np.std(times_samples, ddof=1) / np.sqrt(num_samples))
-            evals_mean[N_idx, p_idx] = (np.mean(evals_samples))
-            evals_stderr[N_idx, p_idx] = (np.std(evals_samples, ddof=1) / np.sqrt(num_samples))
-            aratio_mean[N_idx, p_idx] = (np.mean(aratio_samples))
-            aratio_stderr[N_idx, p_idx] = (np.std(aratio_samples, ddof=1) / np.sqrt(num_samples))
+                summary_writer.writerow({
+                    "family": family, **axis_dict, "p": p,
+                    "time_mean": np.mean(times_samples),
+                    "time_stderr": np.std(times_samples, ddof=1) / np.sqrt(num_samples),
+                    "evals_mean": np.mean(evals_samples),
+                    "evals_stderr": np.std(evals_samples, ddof=1) / np.sqrt(num_samples),
+                    "aratio_mean": np.mean(aratio_samples),
+                    "aratio_stderr": np.std(aratio_samples, ddof=1) / np.sqrt(num_samples),
+                })
+                summary_file.flush()
+
+                print((family, axis_dict, float(p)), "done")
 
 
-    outfile = DATA_DIR / "analysis_data/exp_0/speed_data3.npz"
-
-    np.savez(
-        outfile, 
-        N_values=N_values,
-        p_values=p_values,
-        graphs=random_graphs,
-        times_mean=times_mean, 
-        times_stderr=times_stderr, 
-        evals_mean=evals_mean, 
-        evals_stderr=evals_stderr, 
-        aratio_mean=aratio_mean,
-        aratio_stderr=aratio_stderr,
-    )
-
+print(f" Raw samples  written to   {raw_path}")
+print(f"Summary stats written to   {summary_path}")

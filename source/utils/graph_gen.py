@@ -121,12 +121,13 @@ def save_determ(data_dict, path):
     }
     np.savez_compressed(path, **flat)
 
-def load_determ(path):
+def load_determ(path, N_vals=None):
     data = np.load(path)
+    if N_vals is None:
+        N_vals = [int(name) for name in data.files]
     out = {}
-    for name in data.files:
-        key = int(name)
-        out[key] = data[name]
+    for N in N_vals:
+        out[N] = data[str(N)]
     return out
 
 
@@ -206,13 +207,18 @@ def save_double(data_dict, path):
     }
     np.savez_compressed(path, **flat)
 
-def load_double(path):
+def load_double(path, params=None):
     data = np.load(path)
     out = {}
-    for name in data.files:
-        a, b = name.split('_')
-        key = (int(a), int(b))
-        out[key] = data[name]
+    if params is None:
+        for name in data.files:
+            a, b = name.split('_')
+            key = (int(a), int(b))
+            if params is None or key == params:
+                out[key] = data[name]
+    else:
+        for (a, b) in params:
+            out[(a, b)] = data[f"{a}_{b}"]
     return out
 
 
@@ -269,19 +275,27 @@ def save_Gilbert(data_dict, path):
         flat[f"{N}_{p}_lengths"] = entry['lengths']
     np.savez_compressed(path, **flat)
 
-def load_Gilbert(path):
+def load_Gilbert(path, params=None):
     data = np.load(path)
     out = {}
-    for name in data.files:
-        if name.endswith('_edges'):
-            N, p, _ = name.split('_')
-            key = (int(N), float(p))
-            out.setdefault(key, {})['edges'] = data[name]
-        elif name.endswith('_lengths'):
-            N, p, _ = name.split('_')
-            key = (int(N), float(p))
-            out.setdefault(key, {})['lengths'] = data[name]
-    return out
+    if params is None:
+        for name in data.files:
+            if name.endswith('_edges'):
+                N, p, _ = name.split('_')
+                key = (int(N), float(p))
+                out.setdefault(key, {})['edges'] = data[name]
+            elif name.endswith('_lengths'):
+                N, p, _ = name.split('_')
+                key = (int(N), float(p))
+                out.setdefault(key, {})['lengths'] = data[name]
+        return out
+    else:
+        for (N, q) in params:
+            out[(N, q)] = {
+                'edges': data[f"{N}_{q}_edges"], 
+                'lengths': data[f"{N}_{q}_lengths"]
+            }
+        return out
 
 
 ### General ###
@@ -306,13 +320,13 @@ def gen_save_samples(instructions, folder):
             print("gilbert done")
 
 
-def load_family(path, family):
+def load_family(path, family, params=None):
     if family == 'DRegular' or family == 'complete_bipartite':
-        data_dict = load_double(path)
+        data_dict = load_double(path, params)
     elif family == 'Gilbert':
-        data_dict = load_Gilbert(path)
+        data_dict = load_Gilbert(path, params)
     else:
-        data_dict = load_determ(path)
+        data_dict = load_determ(path, params)
     data_dict['type'] = family
     return data_dict
 
@@ -326,7 +340,10 @@ def get_sample(data_dict, param, s=None):
     else:
         return entry
 
-    
+
+# Usage:
+#  data_dict = load_family(path, family, params=None)
+#  get_sample(data_dict, param, s=None)
 
 ####################################################################################
 ###                                  Generation                                  ###

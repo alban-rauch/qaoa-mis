@@ -27,7 +27,7 @@ strategy_config = {
     "constrained": False,
     "relaxation_type": 'continuous',    #  None | 'continuous'
     "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
-    "fourier_qR": (None, 5),
+    "fourier_qR": [None, 5],
     "init_param": [0.55, 0.27],
     "mixers": ["x"],
 }
