@@ -20,10 +20,12 @@ from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
 problem_config, strategy_config, apparatus_config = cnd.load_condition(COND_DIR / "cond2.yaml")
 
 
-#### (p, samples, params) considered ####
 
 # ============================================================
 # EDIT HERE - tunable part
+# Variables:
+#   x-axis: p, axes (N, q, etc.)
+#   y-axis: times, evals, aratio
 # ============================================================
 SWEEP_CONFIG = {
     'Gilbert': {
