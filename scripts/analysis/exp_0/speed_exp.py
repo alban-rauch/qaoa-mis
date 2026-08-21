@@ -8,7 +8,7 @@ import itertools
 import numpy as np
 
 from source.utils import graph_gen as gph
-from source.utils import cond_gen as cond
+from source.utils import cond_gen as cnd
 
 import source.qaoa_run as qr
 from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
@@ -17,17 +17,19 @@ from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
 #### Fixed variables ####
 
 # Use cond2.yaml by default
-problem_config, strategy_config, apparatus_config = cond.load_condition(COND_DIR / "cond2.yaml")
-
+problem_config, strategy_config, apparatus_config = cnd.load_condition(COND_DIR / "cond2.yaml")
 
 
 #### (p, samples, params) considered ####
 
-conditions = {
+# ============================================================
+# EDIT HERE - tunable part
+# ============================================================
+SWEEP_CONFIG = {
     'Gilbert': {
         'p_values': np.arange(1, 11),
         'num_samples': 10,
-        'axes': {'N': np.arange(5, 16), 'd': [0.25]}
+        'axes': {'N': np.arange(5, 16), 'q': [0.25]}
     }, 
     # 'DRegular': {
     #     'p_values': np.arange(1, 11),
@@ -40,6 +42,7 @@ conditions = {
     #     'axes': {'N': np.arange(5, 16)},
     # },
 }
+# ============================================================
 
 DETERM_FAMILIES = {'complete', 'linear', 'circular'}
 
@@ -47,7 +50,7 @@ DETERM_FAMILIES = {'complete', 'linear', 'circular'}
 #### Random graphs prep ####
 
 random_graphs = {}
-for family, cond in conditions.items():
+for family, cond in SWEEP_CONFIG.items():
     axis_names = list(cond['axes'].keys())
     axis_value_lists = [cond['axes'][name] for name in axis_names]
     combos = list(itertools.product(*axis_value_lists))
@@ -71,15 +74,15 @@ outdir.mkdir(parents=True, exist_ok=True)
 raw_path = outdir / "speed_data4_raw.csv"
 summary_path = outdir / "speed_data4_summary.csv"
 
-all_axis_names = sorted({name for cond in conditions.values() for name in cond['axes']})
+all_axis_names = sorted({name for cond in SWEEP_CONFIG.values() for name in cond['axes']})
 
 raw_fields = ["family"] + all_axis_names + [
     "p", "sample_idx", 
     "times", "evals", "aratio"
 ]
 summary_fields = ["family"] + all_axis_names + [
-    "p", "sample_idx",
-    "time_mean", "time_stderr",
+    "p",
+    "times_mean", "times_stderr",
     "evals_mean", "evals_stderr",
     "aratio_mean", "aratio_stderr",
 ]
@@ -94,7 +97,7 @@ with open(raw_path, "w", newline="") as raw_file, open(summary_path, "w", newlin
     raw_writer.writeheader()
     summary_writer.writeheader()
 
-    for family, cond in conditions.items():
+    for family, cond in SWEEP_CONFIG.items():
         p_values = cond['p_values']
         num_samples = cond['num_samples']
         axis_names = list(cond['axes'].keys())
@@ -123,21 +126,26 @@ with open(raw_path, "w", newline="") as raw_file, open(summary_path, "w", newlin
                         silence=True,
                     )
 
-                    time_val = sum(one_qaoa_run["times"])
+                    times_val = sum(one_qaoa_run["times"])
                     evals_val = one_qaoa_run["cost_circuit_evals"]
                     aratio_val = one_qaoa_run["approximation_ratio"]
 
+                    times_samples[i] = times_val
+                    evals_samples[i] = evals_val
+                    aratio_samples[i] = aratio_val
+
+
                     raw_writer.writerow({
                         "family": family, **axis_dict, "p": p, "sample_idx": i,
-                        "time": time_val, "evals": evals_val, "aratio": aratio_val,
+                        "times": times_val, "evals": evals_val, "aratio": aratio_val,
                     })
 
                 raw_file.flush()
 
                 summary_writer.writerow({
                     "family": family, **axis_dict, "p": p,
-                    "time_mean": np.mean(times_samples),
-                    "time_stderr": np.std(times_samples, ddof=1) / np.sqrt(num_samples),
+                    "times_mean": np.mean(times_samples),
+                    "times_stderr": np.std(times_samples, ddof=1) / np.sqrt(num_samples),
                     "evals_mean": np.mean(evals_samples),
                     "evals_stderr": np.std(evals_samples, ddof=1) / np.sqrt(num_samples),
                     "aratio_mean": np.mean(aratio_samples),
@@ -148,5 +156,5 @@ with open(raw_path, "w", newline="") as raw_file, open(summary_path, "w", newlin
                 print((family, axis_dict, float(p)), "done")
 
 
-print(f" Raw samples  written to   {raw_path}")
+print(f"Raw samples  written to    {raw_path}")
 print(f"Summary stats written to   {summary_path}")
