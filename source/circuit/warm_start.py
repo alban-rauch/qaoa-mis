@@ -56,11 +56,10 @@ def relaxation(graph, wires):
 
 
 
-def relaxation_angles(graph, wires, eps=0.25):
-    d, _ = relaxation(graph, wires)
+def relaxation_angles(x_d, eps=0.25):
     angles = {}
-    for node in d:
-        x = d[node]
+    for node in x_d:
+        x = x_d[node]
         if x < eps:
             x = eps
         elif x > 1-eps:

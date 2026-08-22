@@ -1,33 +1,34 @@
 """
-speed_exp.py
+relax_exp.py
 ============
-Initial speed experiment
 """
-
-import csv
-import itertools
 
 import numpy as np
 
+from source.utils import cond_gen as cnd
+from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
+
+import csv
+import itertools
+ 
+import numpy as np
+ 
 from source.utils import graph_gen as gph
 from source.utils import cond_gen as cnd
-
+from relax_pipeline import compare_pipeline
+ 
 import source.qaoa_run as qr
 from source.paths import DATA_DIR, GRAPHS_DIR, COND_DIR
 
 
-#### Fixed variables ####
-
-# Use cond2.yaml by default
 problem_config, strategy_config, apparatus_config = cnd.load_condition(COND_DIR / "cond2.json")
-
+strategy_config_warm = dict(strategy_config)
+strategy_config_cold = dict(strategy_config)
+strategy_config_cold["relaxation_type"] = None
 
 
 # ============================================================
 # EDIT HERE - tunable part
-# Variables:
-#   x-axis: p, axes (N, q, etc.)
-#   y-axis: times, evals, aratio
 # ============================================================
 
 p_values = [1, 2, 3, 5, 7, 10, 15]
@@ -63,15 +64,11 @@ SWEEP_CONFIG = {
             'num_samples': 1,
             'axes': {'N': np.arange(5, 21)},
     },
-
+    
 }
-
 # ============================================================
 
 DETERM_FAMILIES = {'complete', 'linear', 'circular'}
-
-
-#### Random graphs prep ####
 
 random_graphs = {}
 for family, cond in SWEEP_CONFIG.items():
@@ -93,22 +90,19 @@ for family, cond in SWEEP_CONFIG.items():
 
 #### Output ####
 
-outdir = DATA_DIR / "analysis_data/exp_0"
+outdir = DATA_DIR / "analysis_data/exp_2"
 outdir.mkdir(parents=True, exist_ok=True)
-raw_path = outdir / "speed_data4_raw.csv"
-summary_path = outdir / "speed_data4_summary.csv"
+raw_path = outdir / "relax_data_raw.csv"
+summary_path = outdir / "relax_data_summary.csv"
 
 all_axis_names = sorted({name for cond in SWEEP_CONFIG.values() for name in cond['axes']})
 
-raw_fields = ["family"] + all_axis_names + [
-    "p", "sample_idx", 
-    "times", "evals", "aratio"
-]
+raw_fields = ["family"] + all_axis_names + ["p", "sample_idx", "relax_ratio", "opt_warm_ratio", "opt_cold_ratio"]
 summary_fields = ["family"] + all_axis_names + [
     "p",
-    "times_mean", "times_stderr",
-    "evals_mean", "evals_stderr",
-    "aratio_mean", "aratio_stderr",
+    "relax_ratio_mean", "relax_ratio_stderr",
+    "opt_warm_ratio_mean", "opt_warm_ratio_stderr",
+    "opt_cold_ratio_mean", "opt_cold_ratio_stderr",
 ]
 
 
@@ -136,51 +130,62 @@ with open(raw_path, "w", newline="") as raw_file, open(summary_path, "w", newlin
                 N = axis_dict.get('N')
                 problem_config["N"] = N
 
-                times_samples = np.zeros(num_samples)
-                evals_samples = np.zeros(num_samples)
-                aratio_samples = np.zeros(num_samples)
+                relax_ratio_samples = np.zeros(num_samples)
+                opt_warm_ratio_samples = np.zeros(num_samples)
+                opt_cold_ratio_samples = np.zeros(num_samples)
 
                 for i in range(num_samples):
                     problem_config["graph"] = gph.get_graph_from_edges(
                         gph.get_sample(random_graphs[family], key, s=i), N=N
                     )
 
-                    one_qaoa_run = qr.run_qaoa(
+                    warm_qaoa_run = qr.run_qaoa(
                         problem=problem_config,
-                        strategy=strategy_config,
+                        strategy=strategy_config_warm,
                         apparatus=apparatus_config,
                         silence=True,
                     )
 
-                    times_val = sum(one_qaoa_run["times"])
-                    evals_val = one_qaoa_run["cost_circuit_evals"]
-                    aratio_val = one_qaoa_run["approximation_ratio"]
+                    cold_qaoa_run = qr.run_qaoa(
+                        problem=problem_config,
+                        strategy=strategy_config_cold,
+                        apparatus=apparatus_config,
+                        silence=True,
+                    )
 
-                    times_samples[i] = times_val
-                    evals_samples[i] = evals_val
-                    aratio_samples[i] = aratio_val
+                    seed = abs(hash((family, p, tuple(sorted(axis_dict.items())), i))) % (2**32)
+                    relax_ratio, opt_warm_ratio, opt_cold_ratio = compare_pipeline(
+                        warm_qaoa_run, cold_qaoa_run, seed=seed
+                    )
+
+                    relax_ratio_samples[i] = relax_ratio
+                    opt_warm_ratio_samples[i] = opt_warm_ratio
+                    opt_cold_ratio_samples[i] = opt_cold_ratio
 
 
                     raw_writer.writerow({
                         "family": family, **axis_dict, "p": p, "sample_idx": i,
-                        "times": times_val, "evals": evals_val, "aratio": aratio_val,
+                        "relax_ratio": relax_ratio, 
+                        "opt_warm_ratio": opt_warm_ratio, 
+                        "opt_cold_ratio": opt_cold_ratio,
                     })
+
 
                 raw_file.flush()
 
                 summary_writer.writerow({
                     "family": family, **axis_dict, "p": p,
-                    "times_mean": np.mean(times_samples),
-                    "times_stderr": np.std(times_samples, ddof=1) / np.sqrt(num_samples),
-                    "evals_mean": np.mean(evals_samples),
-                    "evals_stderr": np.std(evals_samples, ddof=1) / np.sqrt(num_samples),
-                    "aratio_mean": np.mean(aratio_samples),
-                    "aratio_stderr": np.std(aratio_samples, ddof=1) / np.sqrt(num_samples),
+                    "relax_ratio_mean": np.mean(relax_ratio_samples),
+                    "relax_ratio_stderr": np.std(relax_ratio_samples, ddof=1) / np.sqrt(num_samples),
+                    "opt_warm_ratio_mean": np.mean(opt_warm_ratio_samples),
+                    "opt_warm_ratio_stderr": np.std(opt_warm_ratio_samples, ddof=1) / np.sqrt(num_samples),
+                    "opt_cold_ratio_mean": np.mean(opt_cold_ratio_samples),
+                    "opt_cold_ratio_stderr": np.std(opt_cold_ratio_samples, ddof=1) / np.sqrt(num_samples),
                 })
                 summary_file.flush()
 
                 print((family, axis_dict, float(p)), "done")
 
 
-print(f"Raw samples  written to    {raw_path}")
+print(f"Raw samples written to     {raw_path}")
 print(f"Summary stats written to   {summary_path}")

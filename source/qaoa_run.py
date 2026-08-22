@@ -31,10 +31,11 @@ def build_hamiltonians(graph, penalizer, constrained, relaxation_type, mixer_nam
     
     cost_h = ans.cost_hamiltonian(node_list, edge_list, degrees, penalizer)
 
-    angles = ws.relaxation_angles(graph, wires, eps=0.25) if relaxation_type == 'continuous' else [0.5 * np.pi] * len(wires)
+    x_d, _ = ws.relaxation(graph, wires)
+    angles = ws.relaxation_angles(x_d, eps=0.25) if relaxation_type == 'continuous' else [0.5 * np.pi] * len(wires)
     mixer_fns = [MIXER_REGISTRY[name].build(graph, angles, constrained) for name in mixer_names]
 
-    return cost_h, mixer_fns, angles
+    return cost_h, mixer_fns, angles, x_d
 
 
 def estimation_framework(wires, p, dev, circuit, cost_h, mixer_fns, angles, counter):
@@ -120,7 +121,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     time0 = time.perf_counter()
 
-    cost_h, mixer_fns, angles = build_hamiltonians(
+    cost_h, mixer_fns, angles, x_d = build_hamiltonians(
         graph,
         penalizer, 
         constrained, 
@@ -200,6 +201,10 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
     # ---------------------------  Output  --------------------------- #
 
     return {
+        "problem": problem,
+        "strategy": strategy,
+        "apparatus": apparatus,
+        "relax_values": x_d,
         "relax_angles": angles,
         "cost_function": cost_function,
         "cost_hamiltonian": cost_h,
