@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_0/speed_exp.py", line 124, in <module>
+    one_qaoa_run = qr.run_qaoa(
+                   ^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/qaoa_run.py", line 123, in run_qaoa
+    cost_h, mixer_fns, angles = build_hamiltonians(
+                                ^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/qaoa_run.py", line 27, in build_hamiltonians
+    node_list = list(graph.nodes)
+                     ^^^^^^^^^^^
+AttributeError: 'numpy.ndarray' object has no attribute 'nodes'
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 629871 to init root cgroup (null)

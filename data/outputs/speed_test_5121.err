@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_0/speed_exp.py", line 122, in <module>
+    problem_config["graph"] = gph.get_sample(random_graphs[family], key, s=i)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/utils/graph_gen.py", line 337, in get_sample
+    return get_Gilbert(entry, s)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/utils/graph_gen.py", line 269, in get_Gilbert
+    return entry['edges'][starts[s]:starts[s+1]]
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: slice indices must be integers or None or have an __index__ method
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 621937 to init root cgroup (null)

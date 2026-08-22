@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/networkx/convert.py", line 151, in to_networkx_graph
+    return nx.from_numpy_array(data, create_using=create_using)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/networkx/utils/decorators.py", line 784, in func
+    return argmap._lazy_compile(__wrapper)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<class 'networkx.utils.decorators.argmap'> compilation 8", line 3, in argmap_from_numpy_array_5
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/networkx/utils/backends.py", line 551, in _call_if_no_backends_installed
+    return self.orig_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/networkx/convert_matrix.py", line 1239, in from_numpy_array
+    raise nx.NetworkXError(f"Adjacency matrix not square: nx,ny={A.shape}")
+networkx.exception.NetworkXError: Adjacency matrix not square: nx,ny=(4, 2)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_0/speed_exp.py", line 122, in <module>
+    problem_config["graph"] = gph.get_graph_from_edges(gph.get_sample(random_graphs[family], key, s=i))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/utils/graph_gen.py", line 32, in get_graph_from_edges
+    return nx.Graph(edges)
+           ^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/networkx/classes/graph.py", line 388, in __init__
+    convert.to_networkx_graph(incoming_graph_data, create_using=self)
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/networkx/convert.py", line 153, in to_networkx_graph
+    raise nx.NetworkXError(
+networkx.exception.NetworkXError: Failed to interpret array as an adjacency matrix.
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 635828 to init root cgroup (null)

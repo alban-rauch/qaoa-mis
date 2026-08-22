@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_0/speed_exp.py", line 124, in <module>
+    one_qaoa_run = qr.run_qaoa(
+                   ^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/qaoa_run.py", line 123, in run_qaoa
+    cost_h, mixer_fns, angles = build_hamiltonians(
+                                ^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/qaoa_run.py", line 34, in build_hamiltonians
+    angles = ws.relaxation_angles(graph, wires, eps=0.25) if relaxation_type == 'continuous' else [0.5 * np.pi] * len(wires)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/circuit/warm_start.py", line 60, in relaxation_angles
+    d, _ = relaxation(graph, wires)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/circuit/warm_start.py", line 48, in relaxation
+    A_ub[k, j] = 1
+    ~~~~^^^^^^
+IndexError: index 4 is out of bounds for axis 1 with size 4
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 641303 to init root cgroup (null)
