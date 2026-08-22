@@ -38,14 +38,14 @@ SWEEP_CONFIG = {
     'Gilbert': {
         'p_values': p_values,
         'num_samples': 10,
-        'axes': {'N': np.arange(5, 21), 'q': [0.25]}
+        'axes': {'N': np.arange(5, 16), 'q': [0.25]}
     }, 
 
-    # 'DRegular': {
-    #     'p_values': np.arange(1, 11),
-    #     'num_samples': 10,
-    #     'axes': {'N': np.arange(5, 16), 'd': [3]},
-    # },
+    'DRegular': {
+            'p_values': p_values,
+            'num_samples': 10,
+            'axes': {'N': np.arange(5, 16), 'd': [3]},
+    },
 
     'complete': {
         'p_values': p_values,
@@ -92,8 +92,8 @@ for family, cond in SWEEP_CONFIG.items():
 
 outdir = DATA_DIR / "analysis_data/exp_2"
 outdir.mkdir(parents=True, exist_ok=True)
-raw_path = outdir / "relax_data_raw.csv"
-summary_path = outdir / "relax_data_summary.csv"
+raw_path = outdir / "relax_data2208_raw.csv"
+summary_path = outdir / "relax_data2208_summary.csv"
 
 all_axis_names = sorted({name for cond in SWEEP_CONFIG.values() for name in cond['axes']})
 
