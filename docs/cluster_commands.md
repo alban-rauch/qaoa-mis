@@ -83,7 +83,8 @@ Work with slurm:
 `tail -f data/outputs/speed_test_123456.out`: watch live \
 `scancel 123456`: cancel \
 `scontrol show job 123456`: detailed info \
-`seff 123456`: resource usage/efficiency
+`seff 123456`: resource usage/efficiency \
+`sacct -j 123456 --format=JobID,JobName,Elapsed,Start,End,State`: info about the job retrospectively
 
 Add if necessary: \
 `srun` \
@@ -92,5 +93,4 @@ Add if necessary: \
 
 `source ~/qaoa_env/bin/activate`
 `module load python/3.12.13.rocm`
-
 
