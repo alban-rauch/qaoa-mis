@@ -215,6 +215,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         
 
     return {
+        
         # Configuration
         "problem": problem,
         "strategy": strategy,
@@ -233,6 +234,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         "best_energy": best_energy,
         "best_energies": best_energies,
         "best_energy_ps": best_energy_ps,
+        # Param history
 
         # Sampling
         "probs": probs,

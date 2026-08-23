@@ -77,8 +77,7 @@ def relax_metric_fn(
         silence=True,
     )
     seed = abs(hash((family, p, tuple(sorted(axis_dict.items())), sample_idx))) % (2**32)
-    relax_ratio, opt_warm_ratio, opt_cold_ratio = compare_pipeline(
-                                                    warm_qaoa_run, cold_qaoa_run, seed=seed)
+    relax_ratio, opt_warm_ratio, opt_cold_ratio = compare_pipeline(warm_qaoa_run, cold_qaoa_run, seed=seed)
     return {
         "relax_ratio": relax_ratio, 
         "opt_warm_ratio": opt_warm_ratio, 
