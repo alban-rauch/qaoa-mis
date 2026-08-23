@@ -1,0 +1,42 @@
+Loading pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950
+  Loading requirement: gcc/13.3.0 Rocm/7.1.1 python/3.11.13
+Layer 1 optimization...
+Eval  10 | Energy: -0.195526
+Layer 2 optimization...
+Eval  10 | Energy: 3.836055
+Eval  20 | Energy: -29.120909
+Layer 3 optimization...
+Eval  10 | Energy: -28.927186
+Eval  20 | Energy: -30.355996
+Eval  30 | Energy: -30.359006
+Layer 4 optimization...
+Eval  10 | Energy: -29.987874
+Eval  20 | Energy: -22.617959
+Eval  30 | Energy: -43.729104
+Eval  40 | Energy: -59.197357
+Eval  50 | Energy: -61.135765
+Eval  60 | Energy: -61.820974
+Eval  70 | Energy: -61.829466
+Eval  80 | Energy: -61.829843
+Eval  90 | Energy: -61.830074
+Layer 5 optimization...
+Eval  10 | Energy: -2.350870
+Eval  20 | Energy: -1.252365
+Eval  30 | Energy: -35.044251
+Eval  40 | Energy: -59.818169
+Eval  50 | Energy: -59.837745
+Layer 6 optimization...
+Eval  10 | Energy: -50.217953
+Eval  20 | Energy: -58.993139
+Eval  30 | Energy: -58.995322
+Eval  40 | Energy: -58.995980
+Eval  50 | Energy: -58.995995
+Eval  60 | Energy: -58.997433
+Eval  70 | Energy: -58.998124
+Layer 7 optimization...
+Eval  10 | Energy: -31.364202
+Eval  20 | Energy: -59.476673
+Eval  30 | Energy: -60.247196
+Eval  40 | Energy: -60.253496
+Eval  50 | Energy: -60.263103
+Eval  60 | Energy: -60.287757

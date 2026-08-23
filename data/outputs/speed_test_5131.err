@@ -1,0 +1,104 @@
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/main.py", line 46, in <module>
+    one_qaoa_run = qr.run_qaoa(
+                   ^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/qaoa_run.py", line 170, in run_qaoa
+    best_params, best_energies, best_energy_ps = param_transfer_fn(
+                                                 ^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/pt_interp.py", line 77, in interp_pt
+    best_params, best_energy_ps = interp_params(
+                                  ^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/pt_interp.py", line 54, in interp_params
+    prev_layer_params, best_energy_ps = interp_params(
+                                        ^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/pt_interp.py", line 54, in interp_params
+    prev_layer_params, best_energy_ps = interp_params(
+                                        ^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/pt_interp.py", line 54, in interp_params
+    prev_layer_params, best_energy_ps = interp_params(
+                                        ^^^^^^^^^^^^^^
+  [Previous line repeated 16 more times]
+  File "/home/arauch/qaoa-mis/source/optimization/pt_interp.py", line 43, in interp_params
+    opt_params, energies = run_optimization(
+                           ^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/optimization_process.py", line 21, in run_optimization
+    return run_lbfgsb(
+           ^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/optimization_process.py", line 96, in run_lbfgsb
+    result = minimize(
+             ^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/scipy/optimize/_minimize.py", line 784, in minimize
+    res = _minimize_lbfgsb(fun, x0, args, jac, bounds,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/scipy/optimize/_lbfgsb_py.py", line 413, in _minimize_lbfgsb
+    sf = _prepare_scalar_function(fun, x0, jac=jac, args=args, epsilon=eps,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/scipy/optimize/_optimize.py", line 310, in _prepare_scalar_function
+    sf = ScalarFunction(fun, x0, args, grad, hess,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/scipy/optimize/_differentiable_functions.py", line 283, in __init__
+    self._update_fun()
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/scipy/optimize/_differentiable_functions.py", line 362, in _update_fun
+    fx = self._wrapped_fun(self.x)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/scipy/_lib/_util.py", line 603, in __call__
+    fx = self.f(np.copy(x), *self.args)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/optimization/optimization_process.py", line 83, in flat_cost
+    energy = cost_function(params)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/qnode.py", line 880, in __call__
+    return self._impl_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/qnode.py", line 853, in _impl_call
+    res = execute(
+          ^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/execution.py", line 239, in execute
+    results = run(tapes, device, config, inner_transform)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/run.py", line 341, in run
+    results = ml_execute(tapes, execute_fn, jpc, device=device)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/interfaces/autograd.py", line 144, in autograd_execute
+    return _execute(parameters, tuple(tapes), execute_fn, jpc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/autograd/tracer.py", line 93, in f_wrapped
+    return f_raw(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/interfaces/autograd.py", line 179, in _execute
+    return _to_autograd(execute_fn(tapes))
+                        ^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/jacobian_products.py", line 485, in execute_and_cache_jacobian
+    results, jac = self._dev_execute_and_compute_derivatives(tapes)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/workflow/jacobian_products.py", line 450, in _dev_execute_and_compute_derivatives
+    return self._device.execute_and_compute_derivatives(numpy_tapes, self._execution_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/devices/modifiers/simulator_tracking.py", line 100, in execute_and_compute_derivatives
+    return untracked_execute_and_compute_derivatives(self, circuits, execution_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/devices/modifiers/single_tape_support.py", line 65, in execute_and_compute_derivatives
+    results, jacs = batch_execute_and_compute_derivatives(self, circuits, execution_config)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/devices/modifiers/simulator_tracking.py", line 100, in execute_and_compute_derivatives
+    return untracked_execute_and_compute_derivatives(self, circuits, execution_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane/devices/modifiers/single_tape_support.py", line 65, in execute_and_compute_derivatives
+    results, jacs = batch_execute_and_compute_derivatives(self, circuits, execution_config)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane_lightning/lightning_base/lightning_base.py", line 462, in execute_and_compute_derivatives
+    results = tuple(
+              ^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane_lightning/lightning_base/lightning_base.py", line 464, in <genexpr>
+    self.dynamic_wires_from_circuit(circuit),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane_lightning/lightning_base/lightning_base.py", line 156, in dynamic_wires_from_circuit
+    self._statevector = self.LightningStateVector(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/pennylane_lightning/lightning_kokkos/_state_vector.py", line 108, in __init__
+    self._qubit_state = self._state_dtype()(*sv_init_args)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Kokkos ERROR: HIP memory space failed to allocate 16 TiB (label="data_").
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 972454 to init root cgroup (null)
