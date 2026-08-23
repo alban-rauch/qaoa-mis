@@ -100,6 +100,8 @@ def extract_solutions(graph, wires, probs, theo_best_config, silence):
 def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ----------------------  Expand variables  ---------------------- #
+    
+    time0 = time.perf_counter()
 
     graph = problem["graph"]
     N = problem["N"]
@@ -119,7 +121,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # -----------------  STEP 1:  Build QAOA ansatz  ----------------- #
 
-    time0 = time.perf_counter()
+    time1 = time.perf_counter()
 
     cost_h, mixer_fns, angles, x_d = build_hamiltonians(
         graph,
@@ -159,7 +161,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ----------------  STEP 2:  Optimize parameters  ---------------- #
 
-    time1 = time.perf_counter()
+    time2 = time.perf_counter()
 
     cost_function_p = lambda p: partial(
         cost_qnode, circuit=circuit, wires=wires, p=p, 
@@ -179,7 +181,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ----------------------  STEP 3: Sampling  ---------------------- #
 
-    time2 = time.perf_counter()
+    time3 = time.perf_counter()
 
     probs = probability_circuit(best_params)
     
@@ -189,7 +191,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     # ------------------  STEP 4: Extract solution  ------------------ #
 
-    time3 = time.perf_counter()
+    time4 = time.perf_counter()
 
     theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
     best_energy = best_energies[-1]
@@ -198,22 +200,54 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         graph, wires, probs, theo_best_config, silence
     )
 
+    
     # ---------------------------  Output  --------------------------- #
 
+    time5 = time.perf_counter()
+
+    times = (
+        time1 - time0, 
+        time2 - time1, 
+        time3 - time2, 
+        time4 - time3,
+        time5 - time4
+    )
+        
+
     return {
+        # Configuration
         "problem": problem,
         "strategy": strategy,
         "apparatus": apparatus,
+
+        # Warm start
         "relax_values": x_d,
         "relax_angles": angles,
+
+        # Optimization
         "cost_function": cost_function,
         "cost_hamiltonian": cost_h,
+
+        # Optimization
         "best_params": best_params,
         "best_energy": best_energy,
-        "approximation_ratio": approximation_ratio,
+        "best_energies": best_energies,
+        "best_energy_ps": best_energy_ps,
+
+        # Sampling
+        "probs": probs,
+        "most_likely_bitstring": most_likely_bitstring,
+        "max_probability": float(np.max(probs)),
         "success": success,
+
+        # Quality
+        "approximation_ratio": approximation_ratio,
+        "theoretical_best_cost": theo_best_cost,
+        "theoretical_best_config": theo_best_config,
+
+        # Performance
         "cost_circuit_evals": counter.cost_circuit_evals,
         "sampling_circuit_evals": counter.sampling_circuit_evals,
-        "times": (time1 - time0, time2 - time1, time3 - time2)
+        "times": times
     }
 
