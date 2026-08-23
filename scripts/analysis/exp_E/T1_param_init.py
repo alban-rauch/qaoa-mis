@@ -13,8 +13,9 @@ import source.utils.classical as clas
 import source.utils.graph_gen as gph
 
 from source.optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
+from source.paths import GRAPHS_DIR
 
-def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
+def run_qaoa(problem, strategy, apparatus, grid_size, silence=True):
 
     # ----------------------  Expand variables  ---------------------- #
 
@@ -48,7 +49,7 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     dev = qml.device(device, wires=wires)
 
-    cost_qnode, cost_function = qr.estimation_framework(
+    cost_qnode, _ = qr.estimation_framework(
         wires,
         p, 
         dev, 
@@ -59,19 +60,6 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
         counter
         )
 
-    sampling_qnode, probability_circuit = qr.sampling_framework(
-        wires, 
-        p, 
-        dev, 
-        sampler_shots, 
-        circuit,
-        cost_h, 
-        mixer_fns, 
-        angles,
-        counter
-        )
-
-
     # ----------------  STEP 2:  Optimize parameters  ---------------- #
 
     cost_function_p = lambda p: partial(
@@ -81,29 +69,16 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     param_transfer_fn = PARAM_TRANSFER_REGISTRY[strategy["param_transfer_type"]].build
 
-    map_mat = np.zeros((p, num_samples+1, num_samples+1))
+    map_mat = np.zeros((p, grid_size+1, grid_size+1))
 
-    theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
-    for i in range(num_samples+1):
-        for j in range(num_samples+1):
-            strategy["init_param"] = [i * 2 * np.pi / num_samples, j * np.pi / num_samples]
+    theo_best_cost, _ = clas.best_config_branch_bound(graph)
+    for i in range(grid_size+1):
+        for j in range(grid_size+1):
+            strategy["init_param"] = [i * 2 * np.pi / grid_size, j * np.pi / grid_size]
 
-            best_params, best_energies, best_energy_ps = param_transfer_fn(
+            _, _, best_energy_ps = param_transfer_fn(
                 cost_function_p, strategy, apparatus, silence=silence
             )
-
-
-            if not silence:
-                # plot.energy_evolution(graph, best_energy_ps, penalizer)
-                print("Optimal Parameters:", best_params)
-
-    # ----------------------  STEP 3: Sampling  ---------------------- #
-
-            probs = probability_circuit(best_params)
-
-            if not silence:
-                # plot.bitstring_probas(wires, probs)
-                pass
 
     # ------------------  STEP 4: Extract solution  ------------------ #
 
@@ -117,12 +92,12 @@ def run_qaoa(problem, strategy, apparatus, num_samples, silence=True):
 
     return np.transpose(map_mat, (0, 2, 1))
 
-def generate_mat(problem_config, strategy_config, apparatus_config, num_samples, filename):
+def generate_mat(problem_config, strategy_config, apparatus_config, grid_size, filename):
     data_mat = run_qaoa(
             problem=problem_config,
             strategy=strategy_config,
             apparatus=apparatus_config,
-            num_samples=num_samples,
+            grid_size=grid_size,
             silence=True
     )
     parameters = np.array(
@@ -145,7 +120,7 @@ strategy_config = {
     "relaxation_type": 'continuous',    #  None | 'continuous'
     "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
     "fourier_qR": (None, 5),
-    "init_param": [0.55, 0.27, 0.11],
+    "init_param": [0.55, 0.27],
     "mixers": ["x", "y"],
 }
 
@@ -159,23 +134,33 @@ apparatus_config = {
 }
 
 if __name__ == "__main__":
-    foldername = Path("plots/T1/5reg-N12-p5-(20x20)")
+    foldername = Path("data/analysis_data/mapping")
     foldername.mkdir(parents=True, exist_ok=True)
-    for idx in range(8):
-        print(f"=== Graph sample {idx+1}/8 ===")
-        problem_config["N"] = 12
-        problem_config["graph"] = gph.randomDRegular(12, 5)
-        filename = foldername / f'data_file_{idx}.npz'
-        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, filename=filename)
+    graphs_coll = gph.load_family(
+        GRAPHS_DIR / f'Gilbert.npz', 
+        "Gilbert", 
+        params=([(12, 0.25)])
+    )
+    problem_config["N"] = 12
+    for i in range(8):
+        print(f"=== Graph sample {i+1}/8 ===")
+        graph = gph.get_graph_from_edges(
+            gph.get_sample(graphs_coll["Gilbert"], (12, 0.25), s=i),
+            N=12
+        )
+        problem_config["graph"] = graph
+        
+        filename = foldername / f'data_file_{i}.npz'
+        generate_mat(problem_config, strategy_config, apparatus_config, grid_size=20, filename=filename)
 
-    foldername = Path("plots/T1/3reg-N8-p5-(20x20)")
-    foldername.mkdir(parents=True, exist_ok=True)
-    for idx in range(8):
-        print(f"=== Graph sample {idx+1}/8 ===")
-        problem_config["N"] = 8
-        problem_config["graph"] = gph.randomDRegular(8, 3)
-        filename = foldername / f'data_file_{idx}.npz'
-        generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, filename=filename)
+    # foldername = Path("plots/T1/3reg-N8-p5-(20x20)")
+    # foldername.mkdir(parents=True, exist_ok=True)
+    # for idx in range(8):
+    #     print(f"=== Graph sample {idx+1}/8 ===")
+    #     problem_config["N"] = 8
+    #     problem_config["graph"] = gph.randomDRegular(8, 3)
+    #     filename = foldername / f'data_file_{idx}.npz'
+    #     generate_mat(problem_config, strategy_config, apparatus_config, num_samples=20, filename=filename)
         
 
 # for idx in range(1):
