@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_0/speed_exp.py", line 87, in <module>
+    random_graphs[family] = gph.load_family(
+                            ^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/utils/graph_gen.py", line 329, in load_family
+    data_dict = load_double(path, params)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arauch/qaoa-mis/source/utils/graph_gen.py", line 225, in load_double
+    out[(a, b)] = data[f"{a}_{b}"]
+                  ~~~~^^^^^^^^^^^^
+  File "/home/software/libraries/pennylane-amdgpu/0.45.0-rocm7.1.1-gfx950/lib/python3.11/site-packages/numpy/lib/_npyio_impl.py", line 243, in __getitem__
+    raise KeyError(f"{key} is not a file in the archive") from None
+KeyError: '5_3 is not a file in the archive'
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 1108430 to init root cgroup (null)
