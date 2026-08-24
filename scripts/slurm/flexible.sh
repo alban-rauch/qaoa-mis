@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################################
-#SBATCH -J speed_test               # Job name               (or --job-name=quantum_sim)
+#SBATCH -J t1paraminit               # Job name               (or --job-name=quantum_sim)
 #SBATCH -p MI350P_600W              # Partition name         (or --partition=0745-1R5600-NOIB)
 #SBATCH -N 1                        # Nodes requested        (or --nodes=1)
 #SBATCH --exclusive                 # Resource not shared with other users
@@ -21,4 +21,5 @@ export PYTHONPATH=/home/arauch/qaoa-mis:${PYTHONPATH:-}
 
 cd /home/arauch/qaoa-mis/
 
-python "source/utils/graph_gen.py"
+python "scripts/analysis/exp_E/T1_param_init.py"
+#python "source/utils/graph_gen.py"
