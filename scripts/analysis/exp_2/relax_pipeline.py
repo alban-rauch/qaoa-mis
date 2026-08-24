@@ -38,16 +38,17 @@ def compare_pipeline(warm_qaoa_run, cold_qaoa_run=None, seed=0):
     penalizer = 1.5
 
     x_d = warm_qaoa_run["relax_values"]
-    bitstring = random_gen_from_relax(x_d, N, seed=seed)
-    relax_energy = energy_from_bitstring(bitstring, N, graph, penalizer)
+    bitstring_rounded = random_gen_from_relax(x_d, N, seed=seed)
+    relax_core_energy = energy_from_bitstring(x_d, N, graph, penalizer)
+    relax_rounded_energy = energy_from_bitstring(bitstring_rounded, N, graph, penalizer)
 
     opt_warm_energy = warm_qaoa_run["best_energy"]
     opt_cold_energy = cold_qaoa_run["best_energy"] if cold_qaoa_run is not None else None
 
-    relax_ratio, opt_warm_ratio, opt_cold_ratio = extract_ratios(
+    relax_core_ratio, relax_rounded_ratio, opt_warm_ratio, opt_cold_ratio = extract_ratios(
         graph, 
-        [relax_energy, opt_warm_energy, opt_cold_energy], 
+        [relax_core_energy, relax_rounded_energy, opt_warm_energy, opt_cold_energy], 
         penalizer
     )
 
-    return relax_ratio, opt_warm_ratio, opt_cold_ratio
+    return relax_core_ratio, relax_rounded_ratio, opt_warm_ratio, opt_cold_ratio

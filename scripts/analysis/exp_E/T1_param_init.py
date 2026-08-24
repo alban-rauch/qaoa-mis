@@ -37,7 +37,7 @@ def run_qaoa(problem, strategy, apparatus, grid_size, silence=True):
 
     # -----------------  STEP 1:  Build QAOA ansatz  ----------------- #
 
-    cost_h, mixer_fns, angles = qr.build_hamiltonians(
+    cost_h, mixer_fns, angles, _ = qr.build_hamiltonians(
         graph,
         penalizer, 
         constrained, 
@@ -139,13 +139,13 @@ if __name__ == "__main__":
     graphs_coll = gph.load_family(
         GRAPHS_DIR / f'Gilbert.npz', 
         "Gilbert", 
-        params=([(12, 0.25)])
+        params=[(12, 0.25)]
     )
     problem_config["N"] = 12
     for i in range(8):
         print(f"=== Graph sample {i+1}/8 ===")
         graph = gph.get_graph_from_edges(
-            gph.get_sample(graphs_coll["Gilbert"], (12, 0.25), s=i),
+            gph.get_sample(graphs_coll, (12, 0.25), s=i),
             N=12
         )
         problem_config["graph"] = graph

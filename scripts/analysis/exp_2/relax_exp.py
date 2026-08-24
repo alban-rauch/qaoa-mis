@@ -76,17 +76,18 @@ def relax_metric_fn(
         apparatus=apparatus_config,
         silence=True,
     )
-    seed = abs(hash((family, p, tuple(sorted(axis_dict.items())), sample_idx))) % (2**32)
-    relax_ratio, opt_warm_ratio, opt_cold_ratio = compare_pipeline(warm_qaoa_run, cold_qaoa_run, seed=seed)
+    seed = 0
+    relax_core_ratio, relax_rounded_ratio, opt_warm_ratio, opt_cold_ratio = compare_pipeline(warm_qaoa_run, cold_qaoa_run, seed=seed)
     return {
-        "relax_ratio": relax_ratio, 
+        "relax_core_ratio": relax_core_ratio, 
+        "relax_rounded_ratio": relax_rounded_ratio, 
         "opt_warm_ratio": opt_warm_ratio, 
         "opt_cold_ratio": opt_cold_ratio,
     }
 
 exp_configs = cnd.load_condition(COND_DIR / "cond2.json")
 outdir = DATA_DIR / "analysis_data/exp_2"
-metrics = ["relax_ratio", "opt_warm_ratio", "opt_cold_ratio"]
+metrics = ["relax_core_ratio", "relax_rounded_ratio", "opt_warm_ratio", "opt_cold_ratio"]
 
 strategy_config_warm = dict(exp_configs[1])
 strategy_config_cold = dict(exp_configs[1])
