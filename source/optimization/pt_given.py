@@ -15,7 +15,7 @@ def given_opt(cost_function_p, strategy, apparatus, silence=True):
     p = apparatus["p"]
     init_params = ws.mixed_init_param(p, strategy["init_param"])
     cost_function = cost_function_p(p)
-    optimal_params, energies = run_optimization(
+    optimal_params, energies, params_history = run_optimization(
         cost_function=cost_function,
         init_params=init_params, 
         optimizer=apparatus["optimizer"], 
@@ -23,4 +23,4 @@ def given_opt(cost_function_p, strategy, apparatus, silence=True):
         silence=silence
         )
     # if not silence: plot.plot_energies(energies)
-    return optimal_params, energies, [energies]
+    return optimal_params, [params_history], energies, [energies]

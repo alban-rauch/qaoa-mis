@@ -15,23 +15,25 @@ def param_restarts(cost_function, n_restarts, p, optimizer, opt_steps, nb_params
     best_params = None
     best_energies = None
     best_energy_ps = []
+    best_params_ps = []
     for i in range(n_restarts):
         if not silence: print(f"Restart {i}")
         init_params_i = ws.random_init_param(p, nb_params, nb_sin)
-        optimal_params, energies = run_optimization(
+        optimal_params, energies, params_history = run_optimization(
             cost_function=cost_function,
             init_params=init_params_i, 
             optimizer=optimizer, 
             steps=opt_steps,
             silence=silence
-            )
+        )
         if best_energies is None or energies[-1] < best_energies[-1]:
             best_params = optimal_params
             best_energies = energies
         best_energy_ps.append(energies)
+        best_params_ps.append(params_history)
         if not silence: print("----------------------------")
     # if not silence: plot.plot_energies(best_energies)
-    return best_params, best_energies, best_energy_ps
+    return best_params, best_params_ps, best_energies, best_energy_ps
 
 
 def random_pt(cost_function_p, strategy, apparatus, silence=True):
@@ -46,4 +48,4 @@ def random_pt(cost_function_p, strategy, apparatus, silence=True):
         nb_params=1+len(strategy["mixers"]),
         nb_sin=1, 
         silence=silence
-        )
+    )

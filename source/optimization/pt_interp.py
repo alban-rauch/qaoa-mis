@@ -14,7 +14,8 @@ import source.circuit.warm_start as ws
 from .optimization_process import run_optimization
 
 
-def linear_interpolation(params_list, p):     # Convert from p-dimensional gamma and beta to (p+1)-dimensional
+def linear_interpolation(params_list, p):
+    # Convert from p-dimensional gamma and beta to (p+1)-dimensional
     params_arr = np.array(params_list)
     new_params = np.zeros((params_arr.shape[0], p+1))
     new_params[:, 0] = params_arr[:, 0]
@@ -23,7 +24,8 @@ def linear_interpolation(params_list, p):     # Convert from p-dimensional gamma
         new_params[:, i] = (i / p) * params_arr[:, i-1] + ((p-i) / p) * params_arr[:, i]
     return new_params.tolist()
 
-def general_linear_interpolation(params_list, p, q):     # Convert from p-dimensional gamma and beta to (p+1)-dimensional
+def general_linear_interpolation(params_list, p, q):
+    # Convert from p-dimensional gamma and beta to (p+1)-dimensional
     params_arr = np.array(params_list)
     if q == 1:
         return np.mean(params_arr, axis=1, keepdims=True).tolist()
@@ -40,7 +42,7 @@ def interp_params(
     if q == 1:
         init_params = ws.mixed_init_param(1, init_param)
         if not silence: print("Layer 1 optimization...")
-        opt_params, energies = run_optimization(
+        opt_params, energies, params_history = run_optimization(
             cost_function=cost_function_p(1),
             init_params=init_params, 
             optimizer=optimizer,
@@ -49,9 +51,10 @@ def interp_params(
             )
         # if not silence: plot.plot_energies(energies)
         best_energy_ps = [energies]
-        return opt_params, best_energy_ps
+        best_params_ps = [params_history]
+        return opt_params, best_energy_ps, best_params_ps
     
-    prev_layer_params, best_energy_ps = interp_params(
+    prev_layer_params, best_energy_ps, best_params_ps = interp_params(
         cost_function_p, 
         init_param=init_param,
         optimizer=optimizer, 
@@ -62,7 +65,7 @@ def interp_params(
     if not silence: print(f"Layer {q} optimization...")
     new_params = linear_interpolation(prev_layer_params, q-1)
     init_params = np.array(new_params, requires_grad=True)
-    opt_params, energies = run_optimization(
+    opt_params, energies, params_history = run_optimization(
             cost_function=cost_function_p(q),
             init_params=init_params,
             optimizer=optimizer,
@@ -70,11 +73,12 @@ def interp_params(
             silence=silence
             )
     best_energy_ps.append(energies)
+    best_params_ps.append(params_history)
     # if not silence: plot.plot_energies(energies)
-    return opt_params, best_energy_ps
+    return opt_params, best_energy_ps, best_params_ps
 
 def interp_pt(cost_function_p, strategy, apparatus, silence=True):
-    best_params, best_energy_ps = interp_params(
+    best_params, best_energy_ps, best_params_ps = interp_params(
         cost_function_p=cost_function_p, 
         init_param=strategy["init_param"], 
         optimizer=apparatus["optimizer"], 
@@ -83,4 +87,4 @@ def interp_pt(cost_function_p, strategy, apparatus, silence=True):
         silence=silence,
         )
     best_energies = best_energy_ps[-1]
-    return best_params, best_energies, best_energy_ps
+    return best_params, best_params_ps, best_energies, best_energy_ps

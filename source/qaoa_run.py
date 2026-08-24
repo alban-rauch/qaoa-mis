@@ -170,7 +170,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     param_transfer_fn = PARAM_TRANSFER_REGISTRY[strategy["param_transfer_type"]].build
 
-    best_params, best_energies, best_energy_ps = param_transfer_fn(
+    best_params, param_hist_ps, best_energy_p, best_energy_ps = param_transfer_fn(
         cost_function_p, strategy, apparatus, silence=silence
     )
 
@@ -194,7 +194,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
     time4 = time.perf_counter()
 
     theo_best_cost, theo_best_config = clas.best_config_branch_bound(graph)
-    best_energy = best_energies[-1]
+    best_energy = best_energy_p[-1]
     approximation_ratio = approx_ratio(graph, best_energy, penalizer, theo_best_cost)
     most_likely_bitstring, success = extract_solutions(
         graph, wires, probs, theo_best_config, silence
@@ -212,10 +212,10 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         time4 - time3,
         time5 - time4
     )
-        
+
 
     return {
-        
+
         # Configuration
         "problem": problem,
         "strategy": strategy,
@@ -231,10 +231,11 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
         # Optimization
         "best_params": best_params,
+        "param_hist": param_hist_ps[-1],
+        "param_hist_ps": param_hist_ps,
         "best_energy": best_energy,
-        "best_energies": best_energies,
+        "best_energy_p": best_energy_p,
         "best_energy_ps": best_energy_ps,
-        # Param history
 
         # Sampling
         "probs": probs,
@@ -250,6 +251,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         # Performance
         "cost_circuit_evals": counter.cost_circuit_evals,
         "sampling_circuit_evals": counter.sampling_circuit_evals,
-        "times": times
+        "times": times,
+
     }
 

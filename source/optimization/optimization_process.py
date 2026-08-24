@@ -45,6 +45,7 @@ def run_optimization(
 def run_native(cost_function, init_params, optimizer, steps=400, precision=1e-6, silence=True):
     params = np.array(init_params, requires_grad=True)
     energies = []
+    params_history = [np.array(params, requires_grad=False)]
 
     flag = True
     near_end = 0
@@ -53,6 +54,7 @@ def run_native(cost_function, init_params, optimizer, steps=400, precision=1e-6,
     while flag:
         params, energy = optimizer.step_and_cost(cost_function, params)
         energies.append(energy)
+        params_history.append(np.array(params, requires_grad=False))
 
         if not silence and i % 10 == 0:
             print(f"Step {i:3d} | Energy: {energy:.6f}")
@@ -67,7 +69,7 @@ def run_native(cost_function, init_params, optimizer, steps=400, precision=1e-6,
 
         i += 1
 
-    return params, energies
+    return params, energies, params_history
 
 
 def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True):
@@ -77,6 +79,7 @@ def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True)
 
     grad_fn = qml.grad(cost_function)
     energies = []
+    params_history = [np.array(init_params, requires_grad=False)]
 
     def flat_cost(flat_params):
         params = np.array(flat_params.reshape(shape), requires_grad=True)
@@ -91,6 +94,9 @@ def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True)
         grad = grad_fn(params)
         return np.array(grad).reshape(-1)
 
+    def record_iteration(xk):
+        params_history.append(np.array(xk.reshape(shape), requires_grad=False))
+    
     x0 = np.array(init_params).reshape(-1)
 
     result = minimize(
@@ -99,9 +105,10 @@ def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True)
         jac=flat_grad,
         method="L-BFGS-B",
         options={"maxiter": maxiter, "gtol": gtol, "disp": False},
+        callback=record_iteration,
     )
 
     best_params = np.array(result.x.reshape(shape), requires_grad=True)
-    return best_params, energies
+    return best_params, energies, params_history
 
 

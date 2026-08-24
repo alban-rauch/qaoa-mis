@@ -69,7 +69,7 @@ def fourier_params(
         alp=0.6, 
         sin_nb=1, 
         silence=True
-        ):
+):
     coeffsL = coeffsB = None
     energy_history = []
     for p in range(1, p_max + 1):
