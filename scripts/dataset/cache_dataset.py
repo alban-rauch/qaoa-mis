@@ -1,6 +1,7 @@
 """
 cache_dataset.py
-=================
+================
+Pipeline to generate a large dataset of QAOA runs.
 """
 
 import itertools
@@ -194,6 +195,9 @@ def run_dataset(
 
                         apparatus_config["p"] = p
 
+                        run_problem_config = dict(problem_config)
+                        run_apparatus_config = dict(apparatus_config)
+
 
                         # --- Run QAOA ---
 
@@ -205,8 +209,8 @@ def run_dataset(
 
                         result = run_method(
                             method=qaoa_method,
-                            problem=problem_config,
-                            apparatus=apparatus_config,
+                            problem=run_problem_config,
+                            apparatus=run_apparatus_config,
                         )
 
                         # --- Cache ---
