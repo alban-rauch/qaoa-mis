@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/arauch/qaoa-mis/scripts/analysis/exp_E/T1_param_init.py", line 148, in <module>
+    gph.get_sample(graphs_coll["Gilbert"], (12, 0.25), s=i),
+                   ~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'Gilbert'
+slurmstepd: error: _cgroup_procs_check: failed on path (null)/cgroup.procs: No such file or directory
+slurmstepd: error: Cannot write to cgroup.procs for (null)
+slurmstepd: error: Unable to move pid 1304220 to init root cgroup (null)
