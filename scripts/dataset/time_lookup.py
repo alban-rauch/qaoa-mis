@@ -1,5 +1,10 @@
+"""
+time_lookup.py
+==============
+Check the average QAOA running time for sample parameters.
+"""
+
 import pickle
-from pathlib import Path
 
 from source.paths import DATA_DIR
 

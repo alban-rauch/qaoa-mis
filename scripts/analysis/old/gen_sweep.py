@@ -127,6 +127,3 @@ def run_sweep(
 
     print(f"Raw samples written to     {raw_path}")
     print(f"Summary stats written to   {summary_path}")
-
-
-

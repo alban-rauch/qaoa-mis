@@ -9,7 +9,7 @@ import numpy as np
 import source.qaoa_run as qr
 from source.utils import cond_gen as cnd
 
-from scripts.analysis.gen_sweep import run_sweep
+from scripts.analysis.old.gen_sweep import run_sweep
 from source.paths import DATA_DIR, COND_DIR
 
 

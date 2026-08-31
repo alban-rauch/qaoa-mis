@@ -1,6 +1,7 @@
 """
 cache_dataset.py
-=================
+================
+Pipeline to generate a large dataset of QAOA runs.
 """
 
 import itertools
@@ -60,11 +61,12 @@ def valid_combo(family, axis_dict):
 
 
 def run_dataset(
-    SWEEP_CONFIG,   # [dict] graph families, graph parameters, p values and number of samples
-    exp_configs,    # [tuple] (problem_config, strategy_config, apparatus_config)
-    qaoa_methods,   # [dict] QAOA configurations
-    outdir,         # [path] storage directory
-    save_every=50,  # [int] flush to disk every N completed mutations (new sample or run), not every single one
+    SWEEP_CONFIG,       # [dict] graph families, graph parameters, p values and number of samples
+    exp_configs,        # [tuple] (problem_config, strategy_config, apparatus_config)
+    qaoa_methods,       # [dict] QAOA configurations
+    outdir,             # [path] storage directory
+    save_every=50,      # [int] flush to disk every N completed mutations (new sample or run), not every single one
+    overwrite=False,    # Replace or not the current files while sweeping
 ):
 
     problem_config, _, apparatus_config = exp_configs
@@ -180,12 +182,19 @@ def run_dataset(
                         # --- Resume support ---
 
                         if run_key in sample["runs"]:
-                            print(
-                                f"{graph_id}: "
-                                f"sample {sample_idx}: "
-                                f"{qaoa_name}, p={p} already exists"
-                            )
-                            continue
+                            if not overwrite:
+                                print(
+                                    f"{graph_id}: sample {sample_idx}: "
+                                    f"{qaoa_name}, p={p} already exists. "
+                                    f"Sample will be skipped. "
+                                )
+                                continue
+                            else:
+                                print(
+                                    f"{graph_id}: sample {sample_idx}: "
+                                    f"{qaoa_name}, p={p} already exists "
+                                    f"Sample will be overwritten. "
+                                )
 
                         # --- Configure run ---
 
@@ -193,6 +202,9 @@ def run_dataset(
                         problem_config["graph"] = graph
 
                         apparatus_config["p"] = p
+
+                        run_problem_config = dict(problem_config)
+                        run_apparatus_config = dict(apparatus_config)
 
 
                         # --- Run QAOA ---
@@ -205,8 +217,8 @@ def run_dataset(
 
                         result = run_method(
                             method=qaoa_method,
-                            problem=problem_config,
-                            apparatus=apparatus_config,
+                            problem=run_problem_config,
+                            apparatus=run_apparatus_config,
                         )
 
                         # --- Cache ---

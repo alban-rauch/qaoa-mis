@@ -6,7 +6,7 @@ Load and plot the CSV data produced by specific experiments
 """
 
 from source.paths import DATA_DIR
-from scripts.analysis.gen_plot import load_raw, load_summary, plot_metric, plot_metrics_comparison
+from scripts.analysis.old.gen_plot import load_raw, load_summary, plot_metric, plot_metrics_comparison
 
 RAW_PATH = DATA_DIR / "analysis_data/exp_0/speed_data4_raw.csv"
 SUMMARY_PATH = DATA_DIR / "analysis_data/exp_0/speed_data4_summary.csv"
