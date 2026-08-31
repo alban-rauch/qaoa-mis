@@ -4,7 +4,7 @@ import source.qaoa_run as qr
 from source.utils import cond_gen as cnd
 from source.paths import DATA_DIR, COND_DIR
 
-from generate_dataset import run_dataset
+from scripts.dataset.cache_dataset import run_dataset
 
 
 outdir = DATA_DIR / "dataset"
@@ -36,8 +36,8 @@ SWEEP_CONFIGS = {
     1: {
         'Gilbert': {
             'p_values': p_values,
-            'num_samples': 20,
-            'axes': {'N': np.arange(5, 21), 'q': [0.25]}
+            'num_samples': 10,
+            'axes': {'N': np.arange(16, 20), 'q': [0.25]}
         }
     },
 
@@ -53,7 +53,7 @@ SWEEP_CONFIGS = {
         'Gilbert': {
             'p_values': p_values,
             'num_samples': 20,
-            'axes': {'N': np.arange(5, 21), 'q': [0.10]}
+            'axes': {'N': np.arange(18, 21), 'q': [0.10]}
         }
     },
 
@@ -61,7 +61,7 @@ SWEEP_CONFIGS = {
         'DRegular': {
             'p_values': p_values,
             'num_samples': 20,
-            'axes': {'N': np.arange(5, 21), 'd': [3]}
+            'axes': {'N': np.arange(18, 21), 'd': [3]}
         }
     },
 
@@ -69,7 +69,7 @@ SWEEP_CONFIGS = {
         'DRegular': {
             'p_values': p_values,
             'num_samples': 20,
-            'axes': {'N': np.arange(5, 21), 'd': [2]}
+            'axes': {'N': np.arange(13, 16), 'd': [2]}
         }
     },
 
@@ -77,23 +77,23 @@ SWEEP_CONFIGS = {
         'complete': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(5, 21)}
+            'axes': {'N': np.arange(21, 30)}
         },
         'linear': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(5, 21)}
+            'axes': {'N': np.arange(21, 30)}
         },
         'circular': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(5, 21)}
+            'axes': {'N': np.arange(21, 30)}
         }
     }
 }
 
 run_dataset(
-    SWEEP_CONFIGS[1],
+    SWEEP_CONFIGS[6],
     exp_configs,
     qaoa_methods,
     outdir,
