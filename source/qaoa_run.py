@@ -79,6 +79,7 @@ def sampling_framework(wires, p, dev, sampler_shots, circuit, cost_h, mixer_fns,
 def approx_ratio(graph, best_energy, penalizer, theo_best_cost):
     node_list = list(graph.nodes)
     edge_list = list(graph.edges)
+    best_energy = np.asarray(best_energy)
     best_cost = ans.energy_to_cost(best_energy, penalizer, node_list, edge_list)
     approximation_ratio = best_cost / theo_best_cost
     return approximation_ratio
@@ -144,7 +145,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         mixer_fns,
         angles,
         counter
-        )
+    )
 
     sampling_qnode, probability_circuit = sampling_framework(
         wires, 
@@ -156,7 +157,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         mixer_fns, 
         angles,
         counter
-        )
+    )
 
 
     # ----------------  STEP 2:  Optimize parameters  ---------------- #
@@ -225,7 +226,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         "relax_values": x_d,
         "relax_angles": angles,
 
-        # Optimization
+        # Cost
         "cost_function": cost_function,
         "cost_hamiltonian": cost_h,
 
