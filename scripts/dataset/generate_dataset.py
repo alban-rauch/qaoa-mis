@@ -1,3 +1,9 @@
+"""
+generate_dataset.py
+===================
+Generation of the dataset as described in cache_dataset.py.
+"""
+
 import numpy as np
 
 import source.qaoa_run as qr
