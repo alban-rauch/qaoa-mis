@@ -9,7 +9,7 @@ __pycache__/
 # *.npy
 # *.csv
 # *.h5
-# *.pkl
+*.pkl
 
 # Plots
 # *.png

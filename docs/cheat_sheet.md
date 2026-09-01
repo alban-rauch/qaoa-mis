@@ -192,7 +192,7 @@ Switch back to an existing branch: `git checkout main`
 
 ### Branch commands
 
-### View
+#### View
 List all branches: `git branch -a`
 
 #### Create branch
@@ -210,3 +210,13 @@ Delete branch: `git switch main / git push origin --delete NAME`
 #### What is this
 Merge feature changes into main: `git switch main / git pull origin main`
 Bring updates from GitHub into current branch: `git pull origin main`
+
+
+### LFS (big files)
+
+```
+git lfs track "data/dataset/*.pkl"
+git add .gitattributes
+git add data/dataset*.pkl
+git commit -m "Track dataset files with Git LFS"
+```

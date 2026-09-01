@@ -7,8 +7,6 @@ Correction of a storage mistake oticed after run.
 import pickle
 from pathlib import Path
 
-from source.utils import graph_gen as gph
-
 
 DATASET_DIR = Path("DATA/dataset")
 
@@ -22,14 +20,14 @@ def repair_file(path):
 
     for sample in cache["samples"].values():
 
-        graph = gph.get_graph_from_edges(sample["edges"], N=N)
+        # graph = gph.get_graph_from_edges(sample["edges"], N=N)
 
         for (method, p), run in sample["runs"].items():
 
             run["problem"] = {
                 **run["problem"],
                 "N": N,
-                "graph": graph,
+                "graph": None,
             }
 
             run["apparatus"] = {
@@ -40,7 +38,7 @@ def repair_file(path):
     tmp_path = Path(str(path) + ".tmp")
 
     with open(tmp_path, "wb") as f:
-        pickle.dump(cache, f)
+        pickle.dump(cache, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     tmp_path.replace(path)
 
