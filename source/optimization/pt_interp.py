@@ -1,7 +1,7 @@
 """
 pt_interp.py
 ===============
-"INTERP" parameter transfer framework.
+"INTERP" general parameter transfer framework.
 """
 
 # ======================================================================================== #
@@ -14,31 +14,31 @@ import source.circuit.warm_start as ws
 from .optimization_process import run_optimization
 
 
-def linear_interpolation(params_list, p):
-    # Convert from p-dimensional gamma and beta to (p+1)-dimensional
-    params_arr = np.array(params_list)
-    new_params = np.zeros((params_arr.shape[0], p+1))
-    new_params[:, 0] = params_arr[:, 0]
-    new_params[:, -1] = params_arr[:, -1]
-    for i in range(1, p):
-        new_params[:, i] = (i / p) * params_arr[:, i-1] + ((p-i) / p) * params_arr[:, i]
-    return new_params.tolist()
+### Application ###
 
-def general_linear_interpolation(params_list, p, q):
-    # Convert from p-dimensional gamma and beta to (p+1)-dimensional
-    params_arr = np.array(params_list)
-    if q == 1:
-        return np.mean(params_arr, axis=1, keepdims=True).tolist()
-    positions = np.linspace(0, p-1, q)
-    floors = np.floor(positions).astype(int)
-    ceilings = np.minimum(floors + 1, p-1)
-    distances = positions - floors
-    new_params = (1 - distances) * params_arr[:, floors] + distances * params_arr[:, ceilings]
-    return new_params.tolist()
+def perturb_params(params, strength, rng):
+    # Zero mean Gaussian noise perturbation (to avoid being stuck on a plateau)
+    params_arr = np.array(params)
+    noise = rng.normal(loc=0.0, scale=strength, size=params_arr.shape)
+    return (params_arr + noise).tolist()
+
 
 def interp_params(
-        cost_function_p, init_param, optimizer, opt_steps, q, silence
-        ):
+        cost_function_p, 
+        init_param, 
+        optimizer, 
+        opt_steps, 
+        q, 
+        interpolator,
+        R_perturb=0,
+        noise_strength=0.3,
+        rng=None,
+        silence=True,
+    ):
+
+    if rng is None:
+        rng = np.random.default_rng()
+
     if q == 1:
         init_params = ws.mixed_init_param(1, init_param)
         if not silence: print("Layer 1 optimization...")
@@ -47,8 +47,8 @@ def interp_params(
             init_params=init_params, 
             optimizer=optimizer,
             steps=opt_steps,
-            silence=silence
-            )
+            silence=silence,
+        )
         # if not silence: plot.plot_energies(energies)
         best_energy_ps = [energies]
         best_params_ps = [params_history]
@@ -60,30 +60,52 @@ def interp_params(
         optimizer=optimizer, 
         opt_steps=opt_steps, 
         q=q-1, 
-        silence=silence
+        interpolator=interpolator,
+        R_perturb=R_perturb,
+        noise_strength=noise_strength,
+        rng=rng,
+        silence=silence,
         )
     if not silence: print(f"Layer {q} optimization...")
-    new_params = linear_interpolation(prev_layer_params, q-1)
-    init_params = np.array(new_params, requires_grad=True)
-    opt_params, energies, params_history = run_optimization(
+
+    base_new_params = interpolator(prev_layer_params, q-1)
+
+    candidates = [base_new_params]
+    for _ in range(R_perturb):
+        candidates.append(perturb_params(base_new_params, noise_strength, rng))
+
+    best_final_energy = None
+    for cand in candidates:
+        init_params = np.array(cand, requires_grad=True)
+        cand_opt_params, cand_energies, cand_params_history = run_optimization(
             cost_function=cost_function_p(q),
             init_params=init_params,
             optimizer=optimizer,
             steps=opt_steps,
-            silence=silence
-            )
+            silence=silence,
+        )
+        final_energy = cand_energies[-1]
+        if best_final_energy is None or final_energy < best_final_energy:
+            best_final_energy = final_energy
+            opt_params, energies, params_history = cand_opt_params, cand_energies, cand_params_history
+
     best_energy_ps.append(energies)
     best_params_ps.append(params_history)
     # if not silence: plot.plot_energies(energies)
     return opt_params, best_energy_ps, best_params_ps
 
-def interp_pt(cost_function_p, strategy, apparatus, silence=True):
+def interp_pt(cost_function_p, strategy, apparatus, interpolator, silence=True):
+    rng = np.random.default_rng(seed=0)
     best_params, best_energy_ps, best_params_ps = interp_params(
         cost_function_p=cost_function_p, 
         init_param=strategy["init_param"], 
         optimizer=apparatus["optimizer"], 
         opt_steps=apparatus["opt_steps"], 
-        q=apparatus["p"], 
+        q=apparatus["p"],                           # Current layer
+        R_perturb=strategy["fourier_qR"][1],        # Random R
+        noise_strength=strategy.get("noise_strength", 0.3),
+        interpolator=interpolator,
+        rng=rng,
         silence=silence,
         )
     best_energies = best_energy_ps[-1]
