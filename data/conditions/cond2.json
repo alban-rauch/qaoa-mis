@@ -4,8 +4,8 @@
     "relaxation_type": "continuous",
     "param_transfer_type": "interp",
     "fourier_qR": [
-      5,
-      10
+      1,
+      0
     ],
     "init_param": [
       0.67,
