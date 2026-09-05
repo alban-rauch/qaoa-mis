@@ -34,14 +34,15 @@ def make_hue_cmap(
     ]
     return LinearSegmentedColormap.from_list(f"hue{h:.2f}", colors, N=N)
 
-def load_trajs(p):
+def load_trajs(p, init_angle_considered):
 
     approx_ratio_histories = []
     param_histories = []
 
-    for i in range(3):
+    for pair in init_angle_considered: 
+        (i, j) = pair
         exp_configs = load_condition(COND_DIR / f"cond2.json")
-        exp_configs[1]["init_param"] = [i / 5, 0.33]
+        exp_configs[1]["init_param"] = [i, j]
 
         family = "Gilbert"
         N = 12
@@ -53,13 +54,14 @@ def load_trajs(p):
             params=[param],
         )
         graph = gph.get_graph_from_edges(
-            gph.get_sample(graphs_loaded[family], param, s=1), 
+            gph.get_sample(graphs_loaded[family], param, s=2), 
             N=N,
         )
 
         exp_configs[0]["N"] = N
         exp_configs[0]["graph"] = graph
         exp_configs[2]["p"] = p
+        exp_configs[1]["param_transfer_type"] = 'interp'
         exp_configs[2]["device"] = "lightning.qubit"
 
         one_qaoa_run = qr.run_qaoa(
@@ -266,6 +268,9 @@ if __name__ == "__main__":
     from source.utils.cond_gen import load_condition
     from source.paths import DATA_DIR, COND_DIR, GRAPHS_DIR
 
+    init_angle_considered = [(i / 3, j / 3) for i in range(3) for j in range(3)]
+    p = 1
+
     LIGHTNESS_BOUNDS = np.array([
         0.0, 0.4,
         0.6, 0.7, 0.75,
@@ -281,18 +286,15 @@ if __name__ == "__main__":
     n_lightness = len(LIGHTNESS_BOUNDS) - 1
     norm = BoundaryNorm(LIGHTNESS_BOUNDS, n_lightness)
 
-    n_runs = 3
+    n_runs = len(init_angle_considered)
     run_colors = plt.cm.tab10(np.linspace(0, 1, n_runs))
     run_cmaps = [make_hue_cmap(run_colors[i], n_lightness, **CONTRAST_PARAMS) for i in range(n_runs)]
-
-
-    p = 1
 
 
     fig, axes = create_polar_fig(p)
 
 
-    approx_ratio_histories, param_histories = load_trajs(p)
+    approx_ratio_histories, param_histories = load_trajs(p, init_angle_considered)
 
     last_lc = None
     final_params = [par[-1] for par in param_histories]
