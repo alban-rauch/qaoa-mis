@@ -21,9 +21,14 @@ def make_graph_id(family, axis_dict):
 
 
 def run_sweep(
-    exp_name, SWEEP_CONFIG,
-    cache_dir, outdir,
-    metrics, metric_fn, qaoa_names, extra_args,
+    exp_name, 
+    SWEEP_CONFIG,   # Graphs / conditions studied
+    cache_dir,      # Input (pkl)
+    outdir,         # Output (csv)
+    metrics,        # y of plots
+    metric_fn,      # y collector
+    qaoa_names,     # QAOA types considered
+    extra_args,     # Metric function args
 ):
 
     #### Output ####
