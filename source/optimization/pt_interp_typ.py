@@ -56,7 +56,10 @@ def cubic_interpolation(params_list, p):
         if p == 1:
             new_params[row_idx] = row[0]
         else:
-            spline = make_interp_spline(x_old, row, k=k)
+            if k == 3:
+                spline = make_interp_spline(x_old, row, k=k, bc_type="clamped")
+            else:
+                spline = make_interp_spline(x_old, row, k=k)
             new_params[row_idx] = spline(x_new)
     return new_params.tolist()
 
