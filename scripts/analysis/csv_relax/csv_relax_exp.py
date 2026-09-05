@@ -1,11 +1,11 @@
 """
-relax_exp.py
-============
+csv_relax_exp.py
+================
 """
  
 import numpy as np
 
-from relax_pipeline import compare_pipeline
+from scripts.analysis.csv_relax.csv_relax_pipeline import compare_pipeline
 from scripts.analysis.exp_sweep import run_sweep
 from source.paths import DATA_DIR
 
@@ -15,20 +15,20 @@ from source.paths import DATA_DIR
 # EDIT HERE - tunable part
 # ============================================================
 
-p_values = [1, 2, 3, 5, 7, 10, 15]
+p_values = np.arange(1, 11)
 
 SWEEP_CONFIG = {
 
     'Gilbert': {
         'p_values': p_values,
-        'num_samples': 10,
-        'axes': {'N': np.arange(5, 16), 'q': [0.25]}
-    }, 
+        'num_samples': 20,
+        'axes': {'N': np.arange(5, 16), 'q': [0.1, 0.25, 0.5]}
+    },
 
     'DRegular': {
-            'p_values': p_values,
-            'num_samples': 10,
-            'axes': {'N': np.arange(5, 16), 'd': [3]},
+        'p_values': p_values,
+        'num_samples': 20,
+        'axes': {'N': np.arange(5, 21), 'd': [2, 3]},
     },
 
     'complete': {
@@ -38,27 +38,26 @@ SWEEP_CONFIG = {
     },
 
     'linear': {
-            'p_values': p_values,
-            'num_samples': 1,
-            'axes': {'N': np.arange(5, 21)},
+        'p_values': p_values,
+        'num_samples': 1,
+        'axes': {'N': np.arange(5, 21)},
     },
 
     'circular': {
-            'p_values': p_values,
-            'num_samples': 1,
-            'axes': {'N': np.arange(5, 21)},
+        'p_values': p_values,
+        'num_samples': 1,
+        'axes': {'N': np.arange(5, 21)},
     },
-    
+
 }
 
 # ============================================================
 
 
-    
 def relax_metric_fn(
     family, N, p, 
-    axis_dict, sample_idx,
-    graph, runs, extra_args,
+    axis_dict, sample_idx, 
+    graph, runs, extra_args, 
 ):
     cold_qaoa_run = runs["cold"]
     warm_qaoa_run = runs["warm"]

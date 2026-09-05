@@ -1,6 +1,6 @@
 """
-relax_pipeline.py
-============
+csv_relax_pipeline.py
+=====================
 """
 
 import numpy as np
