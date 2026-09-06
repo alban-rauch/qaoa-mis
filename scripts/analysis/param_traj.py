@@ -45,8 +45,8 @@ def load_trajs(p, init_angle_considered):
         exp_configs[1]["init_param"] = [i, j]
 
         family = "Gilbert"
-        N = 12
-        param = (12, 0.25)
+        N = 14
+        param = (14, 0.4)
         graphs_loaded = {}
         graphs_loaded[family] = gph.load_family(
             GRAPHS_DIR / f'{family}.npz', 
@@ -273,6 +273,13 @@ if __name__ == "__main__":
     init_angle_considered = [
         (i / 10, j / 10) for i in range(11) for j in range(11)
     ]
+    init_angle_considered = [
+        (0.1, 0.2),       # Super winner
+        # and (0.1, 0.1),
+        (0.1, 0.3), 
+        # and (0.1, 0.0) / (0.1, 1.0) and (0.0, 0.2) / (0.0, 0.8),
+    ]
+
     p = 2
 
     LIGHTNESS_BOUNDS = np.array([
