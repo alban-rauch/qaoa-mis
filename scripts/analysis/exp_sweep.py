@@ -11,13 +11,7 @@ import pickle
 import numpy as np
 
 from source.utils import graph_gen as gph
-
-
-def make_graph_id(family, axis_dict):
-    parts = [family]
-    for name in sorted(axis_dict):
-        parts.append(f"{name}{axis_dict[name]}")
-    return "_".join(parts)
+from scripts.dataset.collect_information import make_graph_id, find_path
 
 
 def run_sweep(
