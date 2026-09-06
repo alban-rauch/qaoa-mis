@@ -23,19 +23,19 @@ strategy_config_cold = dict(exp_configs[1])
 strategy_config_cold["relaxation_type"] = None
 
 qaoa_methods = {
-    "standard_cold": {
+    "standard_cold_00": {
         "runner": qr.run_qaoa,
         "config": strategy_config_cold,
     },
 
-    "standard_warm": {
+    "standard_warm_00": {
         "runner": qr.run_qaoa,
         "config": strategy_config_warm,
     },
 }
 
 
-p_values = np.arange(1, 11)
+p_values = np.arange(1, 6)
 
 SWEEP_CONFIGS = {
 
@@ -43,65 +43,41 @@ SWEEP_CONFIGS = {
         'Gilbert': {
             'p_values': p_values,
             'num_samples': 10,
-            'axes': {'N': np.arange(16, 20), 'q': [0.25]}
+            'axes': {'N': np.arange(5, 16), 'q': [0.10, 0.25]}
         }
     },
 
     2: {
-        'Gilbert': {
+        'DRegular': {
             'p_values': p_values,
-            'num_samples': 20,
-            'axes': {'N': np.arange(5, 21), 'q': [0.5]}
+            'num_samples': 10,
+            'axes': {'N': np.arange(5, 16), 'd': [2, 3]}
         }
     },
 
     3: {
-        'Gilbert': {
-            'p_values': p_values,
-            'num_samples': 20,
-            'axes': {'N': np.arange(18, 21), 'q': [0.10]}
-        }
-    },
-
-    4: {
-        'DRegular': {
-            'p_values': p_values,
-            'num_samples': 20,
-            'axes': {'N': np.arange(18, 21), 'd': [3]}
-        }
-    },
-
-    5: {
-        'DRegular': {
-            'p_values': p_values,
-            'num_samples': 20,
-            'axes': {'N': np.arange(13, 16), 'd': [2]}
-        }
-    },
-
-    6: {
         'complete': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(21, 30)}
+            'axes': {'N': np.arange(1, 16)}
         },
         'linear': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(21, 30)}
+            'axes': {'N': np.arange(1, 16)}
         },
         'circular': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(21, 30)}
+            'axes': {'N': np.arange(1, 16)}
         }
     }
 }
 
 run_dataset(
-    SWEEP_CONFIGS[6],
+    SWEEP_CONFIGS[1],
     exp_configs,
     qaoa_methods,
     outdir,
-    save_every=50,
+    save_every=40,
 )
