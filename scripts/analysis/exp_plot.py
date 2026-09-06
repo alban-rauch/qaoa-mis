@@ -14,7 +14,7 @@ def load_csv(file_path):
     # If summary: One row per (family, <axes...>, p): mean/stderr of each y in `ys`.
     return pd.read_csv(file_path)
 
-def plot_metric(df, x, y, color, group_by=None, fixed=None, ax=None, title=None):
+def plot_metric(df, x, y, group_by=None, fixed=None, ax=None, title=None):
     # Summary-CSV plot: y_mean (+/- y_stderr) wrt x
     # df:       data
     # x:        column as input variable -- eg "p" / "N" / "q"
