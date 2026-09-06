@@ -140,17 +140,13 @@ def run_dataset(
 
                     # If sample does not exist, add it:
 
-                    graph = gph.get_graph_from_edges(
-                        gph.get_sample(
-                            random_graphs[family], 
-                            key, 
-                            s=sample_idx), 
-                        N=N,
-                    )
+                    edges = gph.get_sample(random_graphs[family], key, s=sample_idx)
+                    # graph = gph.get_graph_from_edges(edges, N=N)
+
 
                     cache["samples"][sample_idx] = {
                         "sample_idx": sample_idx,
-                        "edges": list(graph.edges),
+                        "edges": edges,
                         "runs": {},
                     }
 
@@ -163,11 +159,6 @@ def run_dataset(
                         f"{graph_id}: "
                         f"sample {sample_idx} graph created"
                     )
-
-                else:
-                    # Simply reconstruct from edges
-                    edges = cache["samples"][sample_idx]["edges"]
-                    graph = gph.get_graph_from_edges(edges, N=N)
 
                 sample = cache["samples"][sample_idx]
 
@@ -199,7 +190,7 @@ def run_dataset(
                         # --- Configure run ---
 
                         problem_config["N"] = N
-                        problem_config["graph"] = graph
+                        problem_config["graph"] = None
 
                         apparatus_config["p"] = p
 
