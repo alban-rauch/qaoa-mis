@@ -15,6 +15,7 @@ import source.circuit.ansatz as ans
 import source.circuit.warm_start as ws
 from source.circuit.mixers import MIXER_REGISTRY
 from source.optimization.parameter_transfer import PARAM_TRANSFER_REGISTRY
+from source.utils.classical import approx_ratio
 
 
 class CircuitCounter:
@@ -75,14 +76,6 @@ def sampling_framework(wires, p, dev, sampler_shots, circuit, cost_h, mixer_fns,
         counter=counter,
     )
     return sampling_qnode, probability_circuit
-
-def approx_ratio(graph, best_energy, penalizer, theo_best_cost):
-    node_list = list(graph.nodes)
-    edge_list = list(graph.edges)
-    best_energy = np.asarray(best_energy)
-    best_cost = ans.energy_to_cost(best_energy, penalizer, node_list, edge_list)
-    approximation_ratio = best_cost / theo_best_cost
-    return approximation_ratio
 
 def extract_solutions(graph, wires, probs, theo_best_config, silence):
     most_likely_idx = np.argmax(probs)

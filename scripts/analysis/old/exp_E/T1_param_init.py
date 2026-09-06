@@ -84,7 +84,7 @@ def run_qaoa(problem, strategy, apparatus, grid_size, silence=True):
 
             for q in range(1, p+1):
                 energy = best_energy_ps[q-1][-1]
-                approximation_ratio = qr.approx_ratio(graph, energy, penalizer, theo_best_cost)
+                approximation_ratio = clas.approx_ratio(graph, energy, penalizer, theo_best_cost)
                 map_mat[q-1, i, j] = approximation_ratio
                 print(f"{(i, j, q)} done")
 

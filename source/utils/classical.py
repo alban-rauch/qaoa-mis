@@ -4,7 +4,10 @@ classical.py
 Classical resolution.
 """
 
+import numpy as np
+
 from .graph_gen import is_legal
+from source.circuit.ansatz import energy_to_cost
 
 def list_to_string(lst):
     binary = ''
@@ -69,3 +72,11 @@ def best_config_branch_bound(graph):
     best_bit = [''.join(str((m >> i) & 1) for i in range(n)) for m in best_sets]
     return best_score, best_bit
 
+
+def approx_ratio(graph, best_energy, penalizer, theo_best_cost):
+    node_list = list(graph.nodes)
+    edge_list = list(graph.edges)
+    best_energy = np.asarray(best_energy)
+    best_cost = energy_to_cost(best_energy, penalizer, node_list, edge_list)
+    approximation_ratio = best_cost / theo_best_cost
+    return approximation_ratio
