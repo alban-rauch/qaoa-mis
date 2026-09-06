@@ -191,7 +191,7 @@ def run_dataset(
                         # --- Configure run ---
 
                         problem_config["N"] = N
-                        problem_config["graph"] = None
+                        problem_config["graph"] = graph
 
                         apparatus_config["p"] = p
 
