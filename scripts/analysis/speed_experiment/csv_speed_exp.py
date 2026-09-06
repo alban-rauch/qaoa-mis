@@ -6,11 +6,8 @@ Initial speed experiment
 
 import numpy as np
 
-import source.qaoa_run as qr
-from source.utils import cond_gen as cnd
-
-from scripts.analysis.old.gen_sweep import run_sweep
-from source.paths import DATA_DIR, COND_DIR
+from scripts.analysis.exp_sweep import run_sweep
+from source.paths import DATA_DIR
 
 
 
@@ -66,8 +63,8 @@ def speed_metric_fn(
     graph, runs, extra_args, 
 ):
 
-    cold_qaoa_run = runs["cold"]
-    warm_qaoa_run = runs["warm"]
+    cold_qaoa_run = runs["standard_cold"]
+    warm_qaoa_run = runs["standard_warm"]
 
     times_val_cold = sum(cold_qaoa_run["times"])
     times_val_warm = sum(warm_qaoa_run["times"])
@@ -85,7 +82,7 @@ def speed_metric_fn(
         "aratio_warm": aratio_val_warm, 
     }
 
-outdir = DATA_DIR / "analysis_data/relax_exp"
+outdir = DATA_DIR / "analysis_data/speed_exp"
 cache_dir = DATA_DIR / "dataset"
 metrics = [
     "times_cold", 
@@ -95,11 +92,11 @@ metrics = [
     "aratio_cold",
     "aratio_warm",
 ]
-qaoa_names = ["cold", "warm"]
+qaoa_names = ["standard_cold", "standard_warm"]
 extra_args = None
 
 run_sweep(
-    exp_name="relax_exp", 
+    exp_name="speed_exp", 
     SWEEP_CONFIG=SWEEP_CONFIG, 
     cache_dir=cache_dir, 
     outdir=outdir, 
