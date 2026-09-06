@@ -5,7 +5,6 @@ csv_relax_pipeline.py
 
 import numpy as np
 
-import source.qaoa_run as qr
 import source.utils.classical as clas
 
 def random_gen_from_relax(d, N, seed=0):
@@ -25,7 +24,7 @@ def energy_from_bitstring(bitstring, N, graph, penalizer):
 def extract_ratios(graph, considered_energies, penalizer):
     theo_best_cost, _ = clas.best_config_branch_bound(graph)
     considered_ratios = [
-        qr.approx_ratio(graph, energy, penalizer, theo_best_cost) 
+        clas.approx_ratio(graph, energy, penalizer, theo_best_cost) 
                 if energy is not None else None
                 for energy in considered_energies
     ]
