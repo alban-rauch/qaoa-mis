@@ -54,7 +54,7 @@ def load_trajs(p, init_angle_considered):
             params=[param],
         )
         graph = gph.get_graph_from_edges(
-            gph.get_sample(graphs_loaded[family], param, s=2), 
+            gph.get_sample(graphs_loaded[family], param, s=1), 
             N=N,
         )
 
@@ -64,7 +64,7 @@ def load_trajs(p, init_angle_considered):
         exp_configs[1]["param_transfer_type"] = 'interp'
         exp_configs[2]["device"] = "lightning.qubit"
 
-        one_qaoa_run = qr.run_qaoa(
+        one_qaoa_run = run_qaoa(
             problem=exp_configs[0],
             strategy=exp_configs[1],
             apparatus=exp_configs[2],
@@ -72,7 +72,7 @@ def load_trajs(p, init_angle_considered):
         )
 
         theo_best_cost, _ = best_config_branch_bound(graph)
-        approx_ratio_history = qr.approx_ratio(
+        approx_ratio_history = approx_ratio(
             graph,
             one_qaoa_run["best_energy_p"],
             1.5,
@@ -129,6 +129,7 @@ def create_polar_fig(p):
             ax.text(3 * np.pi / 4, 1.4, fr"${label}_{i}$", fontsize=12, ha='center', va='center')
             ax.set_xticks(FIELD_LINE)
             ax.set_xticklabels(FIELD_LINE_LABELS, fontsize=9)
+            ax.tick_params(axis='x', pad=-1)
             ax.set_yticks([])
             ax.grid(False)
             ax.xaxis.grid(True, color='gray', alpha=0.3)
@@ -262,33 +263,36 @@ def add_traj(
 
 if __name__ == "__main__":
 
-    import source.qaoa_run as qr
+    from source.qaoa_run import run_qaoa
+    from source.utils.classical import approx_ratio
     from source.utils import graph_gen as gph
     from source.utils.classical import best_config_branch_bound
     from source.utils.cond_gen import load_condition
     from source.paths import DATA_DIR, COND_DIR, GRAPHS_DIR
 
-    init_angle_considered = [(i / 3, j / 3) for i in range(3) for j in range(3)]
-    p = 1
+    init_angle_considered = [
+        (i / 10, j / 10) for i in range(11) for j in range(11)
+    ]
+    p = 2
 
     LIGHTNESS_BOUNDS = np.array([
         0.0, 0.4,
         0.6, 0.7, 0.75,
         0.8, 0.85, 0.9, 0.95, 1.0,
     ])
+    n_lightness = len(LIGHTNESS_BOUNDS) - 1
+    norm = BoundaryNorm(LIGHTNESS_BOUNDS, n_lightness)
+
 
     CONTRAST_PARAMS = {
         "s_range": (0.3, 1.0), 
         "v_range": (0.8, 0.0),
         "a_range": (0.5, 1.0),
     }
-
-    n_lightness = len(LIGHTNESS_BOUNDS) - 1
-    norm = BoundaryNorm(LIGHTNESS_BOUNDS, n_lightness)
-
     n_runs = len(init_angle_considered)
     run_colors = plt.cm.tab10(np.linspace(0, 1, n_runs))
     run_cmaps = [make_hue_cmap(run_colors[i], n_lightness, **CONTRAST_PARAMS) for i in range(n_runs)]
+
 
 
     fig, axes = create_polar_fig(p)
@@ -296,10 +300,18 @@ if __name__ == "__main__":
 
     approx_ratio_histories, param_histories = load_trajs(p, init_angle_considered)
 
+
     last_lc = None
     final_params = [par[-1] for par in param_histories]
     final_costs = [cost[-1] for cost in approx_ratio_histories]
     run_labels = [f"init={i/n_runs:.1f}" for i in range(len(approx_ratio_histories))]
+
+
+    ranking = np.argsort(final_costs)[::-1]
+    ranked_init_angle_considered = [init_angle_considered[i] for i in ranking]
+    ranked_final_costs = [final_costs[i] for i in ranking]
+    for init, cost in zip(ranked_init_angle_considered, ranked_final_costs):
+        print(init, cost)
 
     for i in range(len(approx_ratio_histories)):
 
