@@ -161,6 +161,7 @@ def run_dataset(
                     )
 
                 sample = cache["samples"][sample_idx]
+                graph = gph.get_graph_from_edges(sample["edges"], N=N)
 
                 # --- QAOA configuration ---
 
