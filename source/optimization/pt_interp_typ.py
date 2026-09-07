@@ -73,6 +73,7 @@ def extend_zero_interpolation(params_list, p):
     params_arr = np.array(params_list)
     new_params = np.zeros((params_arr.shape[0], p + 1))
     new_params[:, :-1] = params_arr
+    new_params[:, -1] = [0.1, 0.2]  # Only work for X
     return new_params.tolist()
 
 def interp_extzero_pt(cost_function_p, strategy, apparatus, silence=True):
