@@ -19,16 +19,18 @@ outdir.mkdir(parents=True, exist_ok=True)
 exp_configs = cnd.load_condition(COND_DIR / "cond2.json")
 
 strategy_config_warm = dict(exp_configs[1])
+strategy_config_warm["param_transfer_type"] = 'extzero'
 strategy_config_cold = dict(exp_configs[1])
+strategy_config_cold["param_transfer_type"] = 'extzero'
 strategy_config_cold["relaxation_type"] = None
 
 qaoa_methods = {
-    "standard_cold_00": {
+    "standard_cold_extzero_cor": {
         "runner": qr.run_qaoa,
         "config": strategy_config_cold,
     },
 
-    "standard_warm_00": {
+    "standard_warm_extzero_cor": {
         "runner": qr.run_qaoa,
         "config": strategy_config_warm,
     },
@@ -44,32 +46,30 @@ SWEEP_CONFIGS = {
             'p_values': p_values,
             'num_samples': 10,
             'axes': {'N': np.arange(5, 16), 'q': [0.10, 0.25]}
-        }
-    },
+        },
 
-    2: {
         'DRegular': {
             'p_values': p_values,
             'num_samples': 10,
             'axes': {'N': np.arange(5, 16), 'd': [2, 3]}
-        }
+        },
     },
+    2: {
 
-    3: {
         'complete': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(1, 16)}
+            'axes': {'N': np.arange(5, 21)}
         },
         'linear': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(1, 16)}
+            'axes': {'N': np.arange(5, 21)}
         },
         'circular': {
             'p_values': p_values,
             'num_samples': 1,
-            'axes': {'N': np.arange(1, 16)}
+            'axes': {'N': np.arange(5, 21)}
         }
     }
 }

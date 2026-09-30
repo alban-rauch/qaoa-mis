@@ -28,3 +28,4 @@ for path in sorted(DATASET_DIR.glob("*.pkl")):
         f"{total/3600:6.2f} h "
         f"({runs} runs)"
     )
+
