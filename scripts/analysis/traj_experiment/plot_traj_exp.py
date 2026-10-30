@@ -9,7 +9,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm, LogNorm, FuncNorm, LinearSegmentedColormap
 from matplotlib.lines import Line2D
 
-from scripts.analysis.param_traj import make_hue_cmap, create_polar_fig, add_traj, finalize_polar_fig
+from scripts.analysis.VOL_exp.param_traj import make_hue_cmap, create_polar_fig, add_traj, finalize_polar_fig
 from scripts.dataset.collect_information import load_cache, load_sample, collect_run
 from source.paths import CACHE_DIR
 
@@ -25,7 +25,7 @@ axis_dict = {
     "N": 10,
     "q": 0.25,
 }
-p = 1
+p = 3
 sample_idx = 0
 
 
@@ -33,8 +33,8 @@ sample_idx = 0
 
 cache = load_cache(cache_dir, family, axis_dict)
 sample = load_sample(cache, sample_idx)
-cold_run = collect_run(sample, "standard_cold", p)
-warm_run = collect_run(sample, "standard_warm", p)
+cold_run = collect_run(sample, "standard_cold_cubic", p)
+warm_run = collect_run(sample, "standard_warm_cubic", p)
 
 
 ### EXTRACT HIST OF ARATIO/PARAM

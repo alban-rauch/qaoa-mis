@@ -11,7 +11,7 @@ import pickle
 import numpy as np
 
 from source.utils import graph_gen as gph
-from scripts.dataset.collect_information import make_graph_id, find_path
+from scripts.dataset.collect_information import make_graph_id
 
 
 def run_sweep(
