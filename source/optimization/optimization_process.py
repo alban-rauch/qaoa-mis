@@ -78,16 +78,15 @@ def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True)
     shape = init_params.shape          # (2, p): [gammas, betas]
 
     grad_fn = qml.grad(cost_function)
-    energies = []
+    energies = [float(cost_function(init_params))]
     params_history = [np.array(init_params, requires_grad=False)]
 
+    cache = {}
     def flat_cost(flat_params):
         params = np.array(flat_params.reshape(shape), requires_grad=True)
-        energy = cost_function(params)
-        energies.append(float(energy))
-        if not silence and len(energies) % 10 == 0:
-            print(f"Eval {len(energies):3d} | Energy: {float(energy):.6f}")
-        return float(energy)
+        energy = float(cost_function(params))
+        cache[flat_params.tobytes()] = energy
+        return energy
 
     def flat_grad(flat_params):
         params = np.array(flat_params.reshape(shape), requires_grad=True)
@@ -95,7 +94,15 @@ def run_lbfgsb(cost_function, init_params, maxiter=300, gtol=1e-8, silence=True)
         return np.array(grad).reshape(-1)
 
     def record_iteration(xk):
-        params_history.append(np.array(xk.reshape(shape), requires_grad=False))
+        params = np.array(xk.reshape(shape), requires_grad=False)
+        params_history.append(params)
+        energy = cache.get(xk.tobytes())
+        if energy is None:
+            energy = float(cost_function(params))
+        energies.append(energy)
+        if not silence and len(energies) % 10 == 0:
+            print(f"Iter {len(energies) - 1:3d} | Energy: {energy:.6f}")
+
     
     x0 = np.array(init_params).reshape(-1)
 
