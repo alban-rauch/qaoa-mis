@@ -18,20 +18,20 @@ from source.paths import DATA_DIR
 #   y-axis: times, evals, aratio
 # ============================================================
 
-p_values = np.arange(1, 11)
+p_values = np.arange(1, 6)
 
 SWEEP_CONFIG = {
 
     'Gilbert': {
         'p_values': p_values,
-        'num_samples': 20,
-        'axes': {'N': np.arange(5, 16), 'q': [0.1, 0.25, 0.5]}
+        'num_samples': 10,
+        'axes': {'N': np.arange(5, 16), 'q': [0.1, 0.25]}
     },
 
     'DRegular': {
         'p_values': p_values,
-        'num_samples': 20,
-        'axes': {'N': np.arange(5, 21), 'd': [2, 3]},
+        'num_samples': 10,
+        'axes': {'N': np.arange(5, 16), 'd': [2, 3]},
     },
 
     'complete': {
@@ -63,8 +63,8 @@ def speed_metric_fn(
     graph, runs, extra_args, 
 ):
 
-    cold_qaoa_run = runs["standard_cold"]
-    warm_qaoa_run = runs["standard_warm"]
+    cold_qaoa_run = runs["standard_cold_cubic"]
+    warm_qaoa_run = runs["standard_warm_cubic"]
 
     times_val_cold = sum(cold_qaoa_run["times"])
     times_val_warm = sum(warm_qaoa_run["times"])
@@ -85,18 +85,18 @@ def speed_metric_fn(
 outdir = DATA_DIR / "analysis_data/speed_exp"
 cache_dir = DATA_DIR / "dataset"
 metrics = [
-    "times_cold", 
+    "times_cold",
     "times_warm", 
     "evals_cold", 
     "evals_warm",
     "aratio_cold",
     "aratio_warm",
 ]
-qaoa_names = ["standard_cold", "standard_warm"]
+qaoa_names = ["standard_cold_cubic", "standard_warm_cubic"]
 extra_args = None
 
 run_sweep(
-    exp_name="speed_exp", 
+    exp_name="speed_exp_cubic", 
     SWEEP_CONFIG=SWEEP_CONFIG, 
     cache_dir=cache_dir, 
     outdir=outdir, 

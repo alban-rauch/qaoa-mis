@@ -15,20 +15,20 @@ from source.paths import DATA_DIR
 # EDIT HERE - tunable part
 # ============================================================
 
-p_values = np.arange(1, 11)
+p_values = np.arange(1, 6)
 
 SWEEP_CONFIG = {
 
     'Gilbert': {
         'p_values': p_values,
-        'num_samples': 20,
+        'num_samples': 10,
         'axes': {'N': np.arange(5, 16), 'q': [0.1, 0.25, 0.5]}
     },
 
     'DRegular': {
         'p_values': p_values,
-        'num_samples': 20,
-        'axes': {'N': np.arange(5, 21), 'd': [2, 3]},
+        'num_samples': 10,
+        'axes': {'N': np.arange(5, 16), 'd': [2, 3]},
     },
 
     'complete': {
@@ -59,14 +59,14 @@ def relax_metric_fn(
     axis_dict, sample_idx, 
     graph, runs, extra_args, 
 ):
-    cold_qaoa_run = runs["standard_cold"]
-    warm_qaoa_run = runs["standard_warm"]
+    cold_qaoa_run = runs["standard_cold_cubic"]
+    warm_qaoa_run = runs["standard_warm_cubic"]
     relax_core_ratio, relax_rounded_ratio, opt_warm_ratio, opt_cold_ratio = compare_pipeline(
         warm_qaoa_run, 
         cold_qaoa_run, 
         graph=graph,
         N=N,
-        seed=0
+        seed=0,
     )
     return {
         "relax_core_ratio": relax_core_ratio, 
@@ -78,12 +78,12 @@ def relax_metric_fn(
 outdir = DATA_DIR / "analysis_data/relax_exp"
 cache_dir = DATA_DIR / "dataset"
 metrics = ["relax_core_ratio", "relax_rounded_ratio", "opt_warm_ratio", "opt_cold_ratio"]
-qaoa_names = ["standard_cold", "standard_warm"]
+qaoa_names = ["standard_cold_cubic", "standard_warm_cubic"]
 extra_args = None
 
 
 run_sweep(
-    exp_name="relax_exp", 
+    exp_name="relax_exp_cubic", 
     SWEEP_CONFIG=SWEEP_CONFIG, 
     cache_dir=cache_dir, 
     outdir=outdir, 

@@ -7,8 +7,8 @@ from source.paths import DATA_DIR
 from scripts.analysis.exp_plot import load_csv, plot_metric, plot_metrics_comparison
 from matplotlib import pyplot as plt
 
-RAW_PATH = DATA_DIR / "analysis_data/relax_exp/relax_exp_data_raw.csv"
-SUMMARY_PATH = DATA_DIR / "analysis_data/relax_exp/relax_exp_data_summary.csv"
+RAW_PATH = DATA_DIR / "analysis_data/relax_exp/relax_exp_cubic_data_raw.csv"
+SUMMARY_PATH = DATA_DIR / "analysis_data/relax_exp/relax_exp_cubic_data_summary.csv"
 
 METRIC_CMAPS = {
     "relax_core_ratio": plt.cm.Greens,
@@ -20,10 +20,10 @@ METRIC_CMAPS = {
 summary = load_csv(SUMMARY_PATH)
 ax = plot_metrics_comparison(
     df=summary, 
-    x="N", 
+    x="p", 
     group_by=None,
     ys=["relax_rounded_ratio", "opt_warm_ratio", "opt_cold_ratio"],
-    fixed={"family": "circular", "p": 10},
+    fixed={"family": "circular", "N": 10},
     group_metric_cmaps=METRIC_CMAPS,
 )
 
