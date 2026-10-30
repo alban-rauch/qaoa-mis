@@ -58,7 +58,6 @@ def estimation_framework(wires, p, dev, circuit, cost_h, mixer_fns, angles, coun
     )
     return cost_qnode, cost_function
 
-
 def sampling_framework(wires, p, dev, sampler_shots, circuit, cost_h, mixer_fns, angles, counter):
     sampling_qnode = qml.QNode(
         ans.sampler,
@@ -159,14 +158,12 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     cost_function_p = lambda p: partial(
         cost_qnode, circuit=circuit, wires=wires, p=p, 
-        cost_h=cost_h, mixer_fns=mixer_fns, angles=angles, counter=counter,
-    )
+        cost_h=cost_h, mixer_fns=mixer_fns, angles=angles, counter=counter)
 
     param_transfer_fn = PARAM_TRANSFER_REGISTRY[strategy["param_transfer_type"]].build
 
     best_params, param_hist_ps, best_energy_p, best_energy_ps = param_transfer_fn(
-        cost_function_p, strategy, apparatus, silence=silence
-    )
+        cost_function_p, strategy, apparatus, silence=silence)
 
 
     if not silence:
@@ -220,6 +217,7 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
         "relax_angles": angles,
 
         # Cost
+        "cost_function_p": cost_function_p,
         "cost_function": cost_function,
         "cost_hamiltonian": cost_h,
 
@@ -249,3 +247,19 @@ def run_qaoa(problem, strategy, apparatus, silence=False):
 
     }
 
+
+def build_cost_function_p(graph, N, strategy, apparatus):
+    wires = range(N)
+    constrained = strategy["constrained"]
+    penalizer = 1.5 if not constrained else 0.0
+    cost_h, mixer_fns, angles, _ = build_hamiltonians(
+        graph, penalizer, constrained, strategy["relaxation_type"], strategy["mixers"])
+    
+    circuit = ans.make_circuit(ans.qaoa_layer)
+    dev = qml.device(apparatus["device"], wires=wires)
+    cost_qnode = qml.QNode(ans.estimator, device=dev, diff_method="adjoint", shots=None)
+    counter = CircuitCounter()
+    
+    return lambda q: partial(
+        cost_qnode, circuit=circuit, wires=wires, p=q,
+        cost_h=cost_h, mixer_fns=mixer_fns, angles=angles, counter=counter)
