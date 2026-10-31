@@ -26,7 +26,7 @@ problem_config = {
 strategy_config = {
     "constrained": False,
     "relaxation_type": 'continuous',    #  None | 'continuous'
-    "param_transfer_type": 'interp',    # 'given' | 'random' | 'interp' | 'fourier'
+    "param_transfer_type": 'cubic',    # 'given' | 'random' | 'interp' | 'fourier' | 'cubic' | 'extzero'
     "fourier_qR": [None, 5],
     "init_param": [0.55, 0.27],
     "mixers": ["x"],
@@ -58,11 +58,11 @@ one_qaoa_run = qr.run_qaoa(
         strategy=strategy_config,
         apparatus=apparatus_config,
         silence=False
-    )
+)
 
-print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
+# print("Circuit evals:", one_qaoa_run["cost_circuit_evals"])
 print("Times:", one_qaoa_run["times"])
-print(one_qaoa_run["param_hist"])
+# print(one_qaoa_run["param_hist"])
 
 # plt.plot(params, np.array(approx_ratios))
 # plt.xlabel("Initial parameters")
